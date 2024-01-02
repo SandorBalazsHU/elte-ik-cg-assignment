@@ -19,12 +19,10 @@ int main( int argc, char* args[] )
 
 	std::atexit(SDL_Quit);
 			
-
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	#ifdef _DEBUG 
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 	#endif
-
 
 	SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE,         32);
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE,            8);
@@ -85,17 +83,13 @@ int main( int argc, char* args[] )
 	ImGui_ImplSDL2_InitForOpenGL(win, context);
 	ImGui_ImplOpenGL3_Init();
 
-	//
-	// 4. lépés: indítsuk el a fő üzenetfeldolgozó ciklust
-	// 
+
 	{
-		// véget kell-e érjen a program futása?
 		bool quit = false;
-		// feldolgozandó üzenet ide kerül
 		SDL_Event ev;
 
-		// alkalmazás példánya
 		WorldOfWarships app;
+
 		if (!app.Init())
 		{
 			SDL_GL_DeleteContext(context);
@@ -121,11 +115,9 @@ int main( int argc, char* args[] )
 					case SDL_KEYDOWN:
 						if ( ev.key.keysym.sym == SDLK_ESCAPE )
 							quit = true;
-
 						// ALT + ENTER vált teljes képernyőre, és vissza.
-						if ( ( ev.key.keysym.sym == SDLK_RETURN )  // Enter le lett nyomva, ...
-							 && ( ev.key.keysym.mod & KMOD_ALT )   // az ALTal együtt, ...
-							 && !( ev.key.keysym.mod & ( KMOD_SHIFT | KMOD_CTRL | KMOD_GUI ) ) ) // de más modifier gomb nem lett lenyomva.
+						if ( ( ev.key.keysym.sym == SDLK_RETURN )
+							 && ( ev.key.keysym.mod & KMOD_ALT ) && !( ev.key.keysym.mod & ( KMOD_SHIFT | KMOD_CTRL | KMOD_GUI ) ) )
 						{
 							Uint32 FullScreenSwitchFlag = ( SDL_GetWindowFlags( win ) & SDL_WINDOW_FULLSCREEN_DESKTOP ) ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP;
 							SDL_SetWindowFullscreen( win, FullScreenSwitchFlag );
@@ -154,10 +146,6 @@ int main( int argc, char* args[] )
 							app.MouseMove(ev.motion);
 						break;
 					case SDL_WINDOWEVENT:
-						// Néhány platformon (pl. Windows) a SIZE_CHANGED nem hívódik meg az első megjelenéskor.
-						// Szerintünk ez bug az SDL könytárban.
-						// Ezért ezt az esetet külön lekezeljük, 
-						// mivel a WorldOfWarships esetlegesen tartalmazhat ablak méret függő beállításokat, pl. a kamera aspect ratioját a perspective() hívásnál.
 						if ( ( ev.window.event == SDL_WINDOWEVENT_SIZE_CHANGED ) || ( ev.window.event == SDL_WINDOWEVENT_SHOWN ) )
 						{
 							int w, h;
@@ -168,21 +156,21 @@ int main( int argc, char* args[] )
 				}
 			}
 
-			// Számoljuk ki az update-hez szükséges idő mennyiségeket!
-			static Uint32 LastTick = SDL_GetTicks(); // statikusan tároljuk, mi volt az előző "tick".
-			Uint32 CurrentTick = SDL_GetTicks(); // Mi az aktuális.
-			SUpdateInfo updateInfo // Váltsuk át másodpercekre!
+			
+			static Uint32 LastTick = SDL_GetTicks();
+			Uint32 CurrentTick = SDL_GetTicks();
+			SUpdateInfo updateInfo
 			{ 
 				static_cast<float>(CurrentTick) / 1000.0f, 
 				static_cast<float>(CurrentTick - LastTick) / 1000.0f 
 			};
-			LastTick = CurrentTick; // Mentsük el utolsóként az aktuális "tick"-et!
+			LastTick = CurrentTick;
 
 			app.Update( updateInfo );
 			app.Render();
 
 			ImGui_ImplOpenGL3_NewFrame();
-			ImGui_ImplSDL2_NewFrame(); //Ezután lehet imgui parancsokat hívni, egészen az ImGui::Render()-ig
+			ImGui_ImplSDL2_NewFrame();
 
 			ImGui::NewFrame();
 			app.RenderGUI();
@@ -191,22 +179,13 @@ int main( int argc, char* args[] )
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 			SDL_GL_SwapWindow(win);
 		}
-
-		// takarítson el maga után az objektumunk
 		app.Clean();
-	} // így az app destruktora még úgy fut le, hogy él a contextünk => a GPU erőforrásokat befoglaló osztályok destruktorai is itt futnak le
+	} 
 
-	//
-	// 5. lépés: lépjünk ki
-	// 
-
-	// ImGui de-init
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplSDL2_Shutdown();
 	ImGui::DestroyContext();
-
 	SDL_GL_DeleteContext(context);
 	SDL_DestroyWindow( win );
-
 	return 0;
 }

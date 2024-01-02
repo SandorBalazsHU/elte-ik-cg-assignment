@@ -425,8 +425,8 @@ void WorldOfWarships::Render()
 
 	glUseProgram( m_programWaterID );
 
-	//matWorld = glm::translate(glm::vec3(0.0,0.1,0.0)); // toljuk lejjebb a vizet
-	matWorld = glm::translate(glm::vec3(0.0,-2.0,0.0)); // toljuk lejjebb a vizet
+	matWorld = glm::translate(glm::vec3(0.0,0.1,0.0)); // toljuk lejjebb a vizet
+	//matWorld = glm::translate(glm::vec3(0.0,-2.0,0.0)); // toljuk lejjebb a vizet
 	//matWorld = glm::identity<glm::mat4>(); // toljuk lejjebb a vizet
 
 	// Mivel másik shader-t használunk, ezért újra be kell állítani a uniform paramétereket
