@@ -117,7 +117,7 @@ void CMyApp::InitGeometry()
 
 	// Suzanne
 
-	MeshObject<Vertex> suzanneMeshCPU = ObjParser::parse("Assets/Suzanne.obj");
+	MeshObject<Vertex> suzanneMeshCPU = ObjParser::parse("Assets/ship.obj");
 
 	m_SuzanneGPU = CreateGLObjectFromMesh( suzanneMeshCPU, vertexAttribList );
 
@@ -216,7 +216,7 @@ void CMyApp::InitTextures()
 	// diffuse texture
 
 	glGenTextures( 1, &m_SuzanneTextureID );
-	TextureFromFile( m_SuzanneTextureID, "Assets/wood.png" );
+	TextureFromFile( m_SuzanneTextureID, "Assets/ship.png" );
 	SetupTextureSampling( GL_TEXTURE_2D, m_SuzanneTextureID );
 
 	glGenTextures( 1, &m_waterTextureID );
@@ -371,7 +371,11 @@ void CMyApp::Render()
 	// A Suzanne alapállásban a Z tengelyre néz, de nekünk az X tengelyre kell, ezért elforgatjuk
 	static const glm::mat4 suzanneTowardX = glm::rotate(glm::radians(90.0f), glm::vec3(0.0, 1.0, 0.0));
 
-	glm::mat4 matWorld = glm::translate(EvaluatePathPosition()) * suzanneRot * suzanneTowardX;
+	//glm::mat4 matWorld = glm::translate(EvaluatePathPosition()) * suzanneRot * suzanneTowardX;
+
+	glm::vec3 pos = EvaluatePathPosition();
+	pos.y = sin((pos.z + m_ElapsedTimeInSec) / 8.0) + sin((pos.y + pos.x + m_ElapsedTimeInSec) / 6.0);
+	glm::mat4 matWorld = glm::translate(pos) * suzanneRot * suzanneTowardX;
 
 	glUniformMatrix4fv( ul( "world" ),    1, GL_FALSE, glm::value_ptr( matWorld ) );
 	glUniformMatrix4fv( ul( "worldIT" ),  1, GL_FALSE, glm::value_ptr( glm::transpose( glm::inverse( matWorld ) ) ) );
@@ -422,7 +426,9 @@ void CMyApp::Render()
 
 	glUseProgram( m_programWaterID );
 
+	//matWorld = glm::translate(glm::vec3(0.0,0.1,0.0)); // toljuk lejjebb a vizet
 	matWorld = glm::translate(glm::vec3(0.0,-2.0,0.0)); // toljuk lejjebb a vizet
+	//matWorld = glm::identity<glm::mat4>(); // toljuk lejjebb a vizet
 
 	// Mivel másik shader-t használunk, ezért újra be kell állítani a uniform paramétereket
 	glUniformMatrix4fv( ul( "world" ),    1, GL_FALSE, glm::value_ptr( matWorld ) );
@@ -657,7 +663,7 @@ void CMyApp::RenderGUI()
 		// és lehessen szerkeszteni
 		if ( currentItem < m_controlPoints.size() && currentItem != -1 ) // currentItem valid index?
 		{
-			ImGui::SliderFloat3("Coordinates", glm::value_ptr(m_controlPoints[currentItem]), -10, 10);
+			ImGui::SliderFloat3("Coordinates", glm::value_ptr(m_controlPoints[currentItem]), -2000, 2000);
 		}
 	}
 	ImGui::End();
