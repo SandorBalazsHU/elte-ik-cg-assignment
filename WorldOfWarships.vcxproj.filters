@@ -24,7 +24,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MyApp.cpp">
+    <ClCompile Include="WorldOfWarships.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="includes\SDL_GLDebugMessageCallback.cpp">
@@ -44,7 +44,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MyApp.h">
+    <ClInclude Include="WorldOfWarships.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="includes\SDL_GLDebugMessageCallback.h">

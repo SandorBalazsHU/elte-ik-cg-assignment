@@ -1,21 +1,20 @@
-#include "MyApp.h"
-#include "SDL_GLDebugMessageCallback.h"
-#include "ObjParser.h"
-#include "ParametricSurfaceMesh.hpp"
-
-#include <imgui.h>
-
 #include <string>
+#include <imgui.h>
+#include "ObjParser.h"
+#include "WorldOfWarships.h"
+#include "ParametricSurfaceMesh.hpp"
+#include "SDL_GLDebugMessageCallback.h"
 
-CMyApp::CMyApp()
+
+WorldOfWarships::WorldOfWarships()
 {
 }
 
-CMyApp::~CMyApp()
+WorldOfWarships::~WorldOfWarships()
 {
 }
 
-void CMyApp::SetupDebugCallback()
+void WorldOfWarships::SetupDebugCallback()
 {
 	// engedélyezzük és állítsuk be a debug callback függvényt ha debug context-ben vagyunk 
 	GLint context_flags;
@@ -28,7 +27,7 @@ void CMyApp::SetupDebugCallback()
 	}
 }
 
-void CMyApp::InitShaders()
+void WorldOfWarships::InitShaders()
 {
 	m_programID = glCreateProgram();
 	AssembleProgram( m_programID, "Vert_PosNormTex.vert", "Frag_LightingNoFaceCull.frag" );
@@ -42,13 +41,13 @@ void CMyApp::InitShaders()
 	InitSkyboxShaders();
 }
 
-void CMyApp::InitSkyboxShaders()
+void WorldOfWarships::InitSkyboxShaders()
 {
 	m_programSkyboxID = glCreateProgram();
 	AssembleProgram( m_programSkyboxID, "Vert_skybox.vert", "Frag_skybox.frag" );
 }
 
-void CMyApp::CleanShaders()
+void WorldOfWarships::CleanShaders()
 {
 	glDeleteProgram( m_programID );
 	glDeleteProgram( m_programWaterID );
@@ -58,7 +57,7 @@ void CMyApp::CleanShaders()
 	CleanSkyboxShaders();
 }
 
-void CMyApp::CleanSkyboxShaders()
+void WorldOfWarships::CleanSkyboxShaders()
 {
 	glDeleteProgram( m_programSkyboxID );
 }
@@ -105,7 +104,7 @@ struct Water
     }
 };
 
-void CMyApp::InitGeometry()
+void WorldOfWarships::InitGeometry()
 {
 
 	const std::initializer_list<VertexAttributeDescriptor> vertexAttribList =
@@ -155,13 +154,13 @@ void CMyApp::InitGeometry()
 	m_waterGPU = CreateGLObjectFromMesh( waterCPU, { { 0, offsetof( glm::vec2,x), 2, GL_FLOAT}});
 }
 
-void CMyApp::CleanGeometry()
+void WorldOfWarships::CleanGeometry()
 {
 	CleanOGLObject( m_SuzanneGPU );
 	CleanSkyboxGeometry();
 }
 
-void CMyApp::InitSkyboxGeometry()
+void WorldOfWarships::InitSkyboxGeometry()
 {
 	// skybox geo
 	MeshObject<glm::vec3> skyboxCPU =
@@ -206,12 +205,12 @@ void CMyApp::InitSkyboxGeometry()
 	m_SkyboxGPU = CreateGLObjectFromMesh( skyboxCPU, { { 0, offsetof( glm::vec3,x ), 3, GL_FLOAT } } );
 }
 
-void CMyApp::CleanSkyboxGeometry()
+void WorldOfWarships::CleanSkyboxGeometry()
 {
 	CleanOGLObject( m_SkyboxGPU );
 }
 
-void CMyApp::InitTextures()
+void WorldOfWarships::InitTextures()
 {
 	// diffuse texture
 
@@ -231,7 +230,7 @@ void CMyApp::InitTextures()
 	InitSkyboxTextures();
 }
 
-void CMyApp::CleanTextures()
+void WorldOfWarships::CleanTextures()
 {
 	glDeleteTextures( 1, &m_SuzanneTextureID );
 	glDeleteTextures( 1, &m_waterTextureID );
@@ -239,7 +238,7 @@ void CMyApp::CleanTextures()
 	CleanSkyboxTextures();
 }
 
-void CMyApp::InitSkyboxTextures()
+void WorldOfWarships::InitSkyboxTextures()
 {
 	// skybox texture
 
@@ -265,12 +264,12 @@ void CMyApp::InitSkyboxTextures()
 
 }
 
-void CMyApp::CleanSkyboxTextures()
+void WorldOfWarships::CleanSkyboxTextures()
 {
 	glDeleteTextures( 1, &m_skyboxTextureID);
 }
 
-bool CMyApp::Init()
+bool WorldOfWarships::Init()
 {
 	SetupDebugCallback();
 
@@ -320,21 +319,21 @@ bool CMyApp::Init()
 	return true;
 }
 
-void CMyApp::Clean()
+void WorldOfWarships::Clean()
 {
 	CleanShaders();
 	CleanGeometry();
 	CleanTextures();
 }
 
-void CMyApp::Update( const SUpdateInfo& updateInfo )
+void WorldOfWarships::Update( const SUpdateInfo& updateInfo )
 {
 	m_ElapsedTimeInSec = updateInfo.ElapsedTimeInSec;
 
 	m_camera.Update( updateInfo.DeltaTimeInSec );
 }
 
-void CMyApp::Render()
+void WorldOfWarships::Render()
 {
 	// töröljük a frampuffert (GL_COLOR_BUFFER_BIT)...
 	// ... és a mélységi Z puffert (GL_DEPTH_BUFFER_BIT)
@@ -562,7 +561,7 @@ void CMyApp::Render()
 	glBindVertexArray( 0 );
 }
 
-void CMyApp::RenderGUI()
+void WorldOfWarships::RenderGUI()
 {
 	//ImGui::ShowDemoWindow();
 	if ( ImGui::Begin( "Lighting settings" ) )
@@ -613,7 +612,7 @@ void CMyApp::RenderGUI()
 		ImGui::SeparatorText("Control points");
 
 		// A kijelölt pont indexe
-		// Lehetne a CMyApp tagváltozója is, de mivel csak a GUI-hoz kell, ezért elégséges lokális, de statikus változónak lennie
+		// Lehetne a WorldOfWarships tagváltozója is, de mivel csak a GUI-hoz kell, ezért elégséges lokális, de statikus változónak lennie
 		static int currentItem = -1;
 
 		// A listboxban megjelenítjük a pontokat
@@ -669,7 +668,7 @@ void CMyApp::RenderGUI()
 	ImGui::End();
 }
 
-GLint CMyApp::ul( const char* uniformName ) noexcept
+GLint WorldOfWarships::ul( const char* uniformName ) noexcept
 {
 	GLuint programID = 0;
 
@@ -686,7 +685,7 @@ GLint CMyApp::ul( const char* uniformName ) noexcept
 // https://wiki.libsdl.org/SDL2/SDL_Keycode
 // https://wiki.libsdl.org/SDL2/SDL_Keymod
 
-void CMyApp::KeyboardDown(const SDL_KeyboardEvent& key)
+void WorldOfWarships::KeyboardDown(const SDL_KeyboardEvent& key)
 {	
 	if ( key.repeat == 0 ) // Először lett megnyomva
 	{
@@ -708,45 +707,45 @@ void CMyApp::KeyboardDown(const SDL_KeyboardEvent& key)
 	m_camera.KeyboardDown( key );
 }
 
-void CMyApp::KeyboardUp(const SDL_KeyboardEvent& key)
+void WorldOfWarships::KeyboardUp(const SDL_KeyboardEvent& key)
 {
 	m_camera.KeyboardUp( key );
 }
 
 // https://wiki.libsdl.org/SDL2/SDL_MouseMotionEvent
 
-void CMyApp::MouseMove(const SDL_MouseMotionEvent& mouse)
+void WorldOfWarships::MouseMove(const SDL_MouseMotionEvent& mouse)
 {
 	m_camera.MouseMove( mouse );
 }
 
 // https://wiki.libsdl.org/SDL2/SDL_MouseButtonEvent
 
-void CMyApp::MouseDown(const SDL_MouseButtonEvent& mouse)
+void WorldOfWarships::MouseDown(const SDL_MouseButtonEvent& mouse)
 {
 }
 
-void CMyApp::MouseUp(const SDL_MouseButtonEvent& mouse)
+void WorldOfWarships::MouseUp(const SDL_MouseButtonEvent& mouse)
 {
 }
 
 // https://wiki.libsdl.org/SDL2/SDL_MouseWheelEvent
 
-void CMyApp::MouseWheel(const SDL_MouseWheelEvent& wheel)
+void WorldOfWarships::MouseWheel(const SDL_MouseWheelEvent& wheel)
 {
 	m_camera.MouseWheel( wheel );
 }
 
 
 // a két paraméterben az új ablakméret szélessége (_w) és magassága (_h) található
-void CMyApp::Resize(int _w, int _h)
+void WorldOfWarships::Resize(int _w, int _h)
 {
 	glViewport(0, 0, _w, _h);
 	m_camera.Resize( _w, _h );
 }
 
 // Pozíció kiszámítása a kontrollpontok alapján
-glm::vec3 CMyApp::EvaluatePathPosition() const
+glm::vec3 WorldOfWarships::EvaluatePathPosition() const
 {
 	if (m_controlPoints.size() == 0) // Ha nincs pont, akkor visszaadjuk az origót
 		return glm::vec3(0);
@@ -765,7 +764,7 @@ glm::vec3 CMyApp::EvaluatePathPosition() const
 }
 
 // Tangens kiszámítása a kontrollpontok alapján
-glm::vec3 CMyApp::EvaluatePathTangent() const
+glm::vec3 WorldOfWarships::EvaluatePathTangent() const
 {
 	if (m_controlPoints.size() < 2) // Ha nincs elég pont az interpolációhoy, akkor visszaadjuk az x tengelyt
 		return glm::vec3(1.0,0.0,0.0);

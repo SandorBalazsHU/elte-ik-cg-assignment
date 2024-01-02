@@ -1,93 +1,51 @@
-// GLEW
+#include <imgui.h>
+#include <sstream>
+#include <iostream>
 #include <GL/glew.h>
-
-// SDL
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
-
-// ImGui
-#include <imgui.h>
 #include <imgui_impl_sdl2.h>
 #include <imgui_impl_opengl3.h>
+#include "WorldOfWarships.h"
 
-// standard
-#include <iostream>
-#include <sstream>
-
-#include "MyApp.h"
-
-int main( int argc, char* args[] )
+int main( int argc, char* args[] ) 
 {
-	//
-	// 1. lépés: inicializáljuk az SDL-t
-	//
-
-	// Állítsuk be a hiba Logging függvényt.
 	SDL_LogSetPriority(SDL_LOG_CATEGORY_ERROR, SDL_LOG_PRIORITY_ERROR);
-	// a grafikus alrendszert kapcsoljuk csak be, ha gond van, akkor jelezzük és lépjünk ki
 	if ( SDL_Init( SDL_INIT_VIDEO ) == -1 )
 	{
-		// irjuk ki a hibat es termináljon a program
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[SDL initialization] Error during the SDL initialization: %s", SDL_GetError());
 		return 1;
 	}
 
-	// Miután az SDL Init lefutott, kilépésnél fusson le az alrendszerek kikapcsolása.
-	// Így akkor is lefut, ha valamilyen hiba folytán lépünk ki.
 	std::atexit(SDL_Quit);
 			
-	//
-	// 2. lépés: állítsuk be az OpenGL-es igényeinket, hozzuk létre az ablakunkat, indítsuk el az OpenGL-t
-	//
-
-	// 2a: OpenGL indításának konfigurálása, ezt az ablak létrehozása előtt kell megtenni!
-
-	// beállíthatjuk azt, hogy pontosan milyen OpenGL context-et szeretnénk létrehozni - ha nem tesszük, akkor
-	// automatikusan a legmagasabb elérhető verziójút kapjuk
-	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	//SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-#ifdef _DEBUG 
-	// ha debug módú a fordítás, legyen az OpenGL context is debug módban, ekkor működik a debug callback 
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
-#endif 
+	#ifdef _DEBUG 
+		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+	#endif
 
-	// állítsuk be, hogy hány biten szeretnénk tárolni a piros, zöld, kék és átlátszatlansági információkat pixelenként
+
 	SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE,         32);
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE,            8);
 	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,          8);
 	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,           8);
 	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE,          8);
-	// duplapufferelés
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,		1);
-	// mélységi puffer hány bites legyen
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,          24);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
+	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
 
-	// antialiasing - ha kell
-	//SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS,  1);
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES,  2);
-
-	// hozzuk létre az ablakunkat
 	SDL_Window *win = nullptr;
-	win = SDL_CreateWindow( "Hello SDL&OpenGL!",		// az ablak fejléce
-							100,						// az ablak bal-felső sarkának kezdeti X koordinátája
-							100,						// az ablak bal-felső sarkának kezdeti Y koordinátája
-							800,						// ablak szélessége
-							600,						// és magassága
-							SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);			// megjelenítési tulajdonságok
+	win = SDL_CreateWindow( "WorldOfWarships", 100, 100, 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED);
 
-
-	// ha nem sikerült létrehozni az ablakot, akkor írjuk ki a hibát, amit kaptunk és lépjünk ki
 	if (win == nullptr)
 	{
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[Window creation] Error during the SDL initialization: %s", SDL_GetError());
 		return 1;
 	}
-
-	//
-	// 3. lépés: hozzunk létre az OpenGL context-et - ezen keresztül fogunk rajzolni
-	//
 
 	SDL_GLContext	context = SDL_GL_CreateContext(win);
 	if (context == nullptr)
@@ -96,10 +54,8 @@ int main( int argc, char* args[] )
 		return 1;
 	}	
 
-	// megjelenítés: várjuk be a vsync-et
 	SDL_GL_SetSwapInterval(1);
 
-	// indítsuk el a GLEW-t
 	GLenum error = glewInit();
 	if ( error != GLEW_OK )
 	{
@@ -107,7 +63,6 @@ int main( int argc, char* args[] )
 		return 1;
 	}
 
-	// kérdezzük le az OpenGL verziót
 	int glVersion[2] = {-1, -1}; 
 	glGetIntegerv(GL_MAJOR_VERSION, &glVersion[0]); 
 	glGetIntegerv(GL_MINOR_VERSION, &glVersion[1]); 
@@ -124,16 +79,9 @@ int main( int argc, char* args[] )
 		return 1;
 	}
 
-	std::stringstream window_title;
-	window_title << "OpenGL " << glVersion[0] << "." << glVersion[1];
-	SDL_SetWindowTitle(win, window_title.str().c_str());
-
-	//Imgui init
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-
 	ImGui::StyleColorsDark();
-
 	ImGui_ImplSDL2_InitForOpenGL(win, context);
 	ImGui_ImplOpenGL3_Init();
 
@@ -147,7 +95,7 @@ int main( int argc, char* args[] )
 		SDL_Event ev;
 
 		// alkalmazás példánya
-		CMyApp app;
+		WorldOfWarships app;
 		if (!app.Init())
 		{
 			SDL_GL_DeleteContext(context);
@@ -209,7 +157,7 @@ int main( int argc, char* args[] )
 						// Néhány platformon (pl. Windows) a SIZE_CHANGED nem hívódik meg az első megjelenéskor.
 						// Szerintünk ez bug az SDL könytárban.
 						// Ezért ezt az esetet külön lekezeljük, 
-						// mivel a MyApp esetlegesen tartalmazhat ablak méret függő beállításokat, pl. a kamera aspect ratioját a perspective() hívásnál.
+						// mivel a WorldOfWarships esetlegesen tartalmazhat ablak méret függő beállításokat, pl. a kamera aspect ratioját a perspective() hívásnál.
 						if ( ( ev.window.event == SDL_WINDOWEVENT_SIZE_CHANGED ) || ( ev.window.event == SDL_WINDOWEVENT_SHOWN ) )
 						{
 							int w, h;

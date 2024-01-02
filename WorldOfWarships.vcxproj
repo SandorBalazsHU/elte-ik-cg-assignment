@@ -83,7 +83,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="MyApp.cpp" />
+    <ClCompile Include="WorldOfWarships.cpp" />
     <ClCompile Include="includes\SDL_GLDebugMessageCallback.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="includes\GLUtils.cpp" />
@@ -91,7 +91,7 @@
     <ClCompile Include="includes\ObjParser.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MyApp.h" />
+    <ClInclude Include="WorldOfWarships.h" />
     <ClInclude Include="includes\SDL_GLDebugMessageCallback.h" />
     <ClInclude Include="includes\GLUtils.hpp" />
     <ClInclude Include="includes\Camera.h" />

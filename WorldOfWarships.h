@@ -23,11 +23,11 @@ struct SUpdateInfo
 	float DeltaTimeInSec   = 0.0f; // Előző Update óta eltelt idő
 };
 
-class CMyApp
+class WorldOfWarships
 {
 public:
-	CMyApp();
-	~CMyApp();
+	WorldOfWarships();
+	~WorldOfWarships();
 
 	bool Init();
 	void Clean();
