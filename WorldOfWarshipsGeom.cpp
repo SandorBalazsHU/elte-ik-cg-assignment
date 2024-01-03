@@ -38,6 +38,15 @@ void WorldOfWarships::initGeometry()
 	MeshObject<Vertex> shipMesh = ObjParser::parse("Assets/ship.obj");
 	shipGeom = CreateGLObjectFromMesh(shipMesh, vertexAttribList);
 
+	MeshObject<Vertex> shipCanonMesh = ObjParser::parse("Assets/ship_canon.obj");
+	shipCanonGeom = CreateGLObjectFromMesh(shipCanonMesh, vertexAttribList);
+
+	MeshObject<Vertex> shipTuretMesh = ObjParser::parse("Assets/ship_turet.obj");
+	shipTuretGeom = CreateGLObjectFromMesh(shipTuretMesh, vertexAttribList);
+
+	MeshObject<Vertex> lightHouseMesh = ObjParser::parse("Assets/lighthouse.obj");
+	lightHouseGeom = CreateGLObjectFromMesh(lightHouseMesh, vertexAttribList);
+
 	// Skybox
 	initSkyboxGeometry();
 
@@ -57,12 +66,14 @@ void WorldOfWarships::initGeometry()
 void WorldOfWarships::cleanGeometry()
 {
 	CleanOGLObject(shipGeom);
+	CleanOGLObject(shipCanonGeom);
+	CleanOGLObject(shipTuretGeom);
+	CleanOGLObject(lightHouseGeom);
 	cleanSkyboxGeometry();
 }
 
 void WorldOfWarships::initSkyboxGeometry()
 {
-	//skybox geom
 	MeshObject<glm::vec3> skyboxMesh =
 	{
 		std::vector<glm::vec3>

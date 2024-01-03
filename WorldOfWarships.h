@@ -24,8 +24,8 @@
 
 struct SUpdateInfo
 {
-	float ElapsedTimeInSec = 0.0f; // Program indulása óta eltelt idő
-	float DeltaTimeInSec   = 0.0f; // Előző Update óta eltelt idő
+	float ElapsedTimeInSec = 0.0f;
+	float DeltaTimeInSec   = 0.0f;
 };
 
 class WorldOfWarships
@@ -48,8 +48,8 @@ public:
 	void mouseUp(const SDL_MouseButtonEvent&);
 	void mouseWheel(const SDL_MouseWheelEvent&);
 	void resize(int, int);
-protected:
 
+private:
 	//water
 	float waterWidth = 2000.0f;
 	float waterHight = 2000.0f;
@@ -61,6 +61,14 @@ protected:
 	GLuint shaderBase = 0;
 	GLuint shaderSkyBox = 0;
 	GLuint shaderWater = 0;
+
+	//geom
+	OGLObject shipGeom = {};
+	OGLObject shipCanonGeom = {};
+	OGLObject shipTuretGeom = {};
+	OGLObject lightHouseGeom = {};
+	OGLObject skyBoxGeom = {};
+	OGLObject waterGeom = {};
 
 	//textures
 	GLuint shipTexture = 0;
@@ -87,13 +95,6 @@ protected:
 	glm::vec3 m_Kd = glm::vec3( 1.0 );
 	glm::vec3 m_Ks = glm::vec3( 1.0 );
 	float m_Shininess = 1.0;
-
-	//geom
-	OGLObject shipGeom = {};
-	OGLObject shipCanonGeom = {};
-	OGLObject shipTuretGeom = {};
-	OGLObject skyBoxGeom = {};
-	OGLObject waterGeom = {};
 
 	void initTextures();
 	void cleanTextures();
