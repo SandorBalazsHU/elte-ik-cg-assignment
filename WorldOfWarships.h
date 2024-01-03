@@ -67,7 +67,6 @@ private:
 	GLuint shaderBase = 0;
 	GLuint shaderSkyBox = 0;
 	GLuint shaderWater = 0;
-	GLuint mountainsShader = 0;
 
 	//geom
 	OGLObject shipGeom = {};

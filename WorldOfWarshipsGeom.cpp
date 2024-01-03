@@ -50,6 +50,7 @@ struct Mountains
 
 		float randomValue = getRandomFloat(minValue, maxValue);
 		pos.y += randomValue;
+		pos.y *= -1;
 
 		return pos;
 	}
@@ -58,13 +59,13 @@ struct Mountains
 	{
 		glm::vec3 du = GetPos(u + 0.01f, v) - GetPos(u - 0.01f, v);
 		glm::vec3 dv = GetPos(u, v + 0.01f) - GetPos(u, v - 0.01f);
-
-		return -glm::normalize(glm::cross(du, dv));
+		return glm::normalize(glm::cross(du, dv));
 	}
 
 	glm::vec2 GetTex(float u, float v) const noexcept
 	{
 		glm::vec3 pos = GetPos(u, v);
+		pos.y *= -1;
 		float normalizedY = (pos.y - (-0.5f)) / (4.5f - (-0.5f));
 		return glm::vec2(normalizedY, 0.5f);
 	}

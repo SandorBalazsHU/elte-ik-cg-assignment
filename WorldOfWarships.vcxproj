@@ -110,14 +110,11 @@
     <ClInclude Include="includes\ParametricSurfaceMesh.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Frag_Mountains.frag" />
     <None Include="Frag_Water.frag" />
     <None Include="Vert_Base.vert" />
-    <None Include="Vert_Mountains.vert" />
     <None Include="Vert_SkyBox.vert" />
     <None Include="Frag_SkyBox.frag" />
     <None Include="Frag_Base.frag" />
-    <None Include="_Frag_BaseNoFaceCull.frag" />
     <None Include="Vert_Water.vert" />
   </ItemGroup>
   <ItemGroup>

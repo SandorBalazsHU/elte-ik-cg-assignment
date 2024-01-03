@@ -15,8 +15,6 @@ void WorldOfWarships::initShaders()
 	AssembleProgram(shaderWater, "Vert_Water.vert", "Frag_Water.frag");
 	shaderSkyBox = glCreateProgram();
 	AssembleProgram(shaderSkyBox, "Vert_SkyBox.vert", "Frag_SkyBox.frag");
-	mountainsShader = glCreateProgram();
-	AssembleProgram(mountainsShader, "Vert_Mountains.vert", "Frag_Mountains.frag");
 }
 
 void WorldOfWarships::cleanShaders()
@@ -24,7 +22,6 @@ void WorldOfWarships::cleanShaders()
 	glDeleteProgram(shaderBase);
 	glDeleteProgram(shaderWater);
 	glDeleteProgram(shaderSkyBox);
-	glDeleteProgram(mountainsShader);
 }
 
 void WorldOfWarships::initTextures()

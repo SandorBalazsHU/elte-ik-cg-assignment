@@ -109,19 +109,10 @@
     <None Include="Frag_Base.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="_Frag_BaseNoFaceCull.frag">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="Vert_Water.vert">
       <Filter>Shaders</Filter>
     </None>
     <None Include="Frag_Water.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Frag_Mountains.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Vert_Mountains.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>
