@@ -1,21 +1,15 @@
 #pragma once
 
 // GLM
+#include "Camera.h"
+#include <GL/glew.h>
+#include <SDL2/SDL.h>
+#include "GLUtils.hpp"
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <SDL2/SDL_opengl.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform2.hpp>
-
-// GLEW
-#include <GL/glew.h>
-
-// SDL
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
-
-// Utils
-#include "GLUtils.hpp"
-#include "Camera.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 struct SUpdateInfo
 {
@@ -44,11 +38,6 @@ public:
 	void MouseWheel(const SDL_MouseWheelEvent&);
 	void Resize(int, int);
 protected:
-	void SetupDebugCallback();
-
-	//
-	// Adat változók
-	//
 
 	float m_ElapsedTimeInSec = 0.0f;
 
@@ -83,7 +72,6 @@ protected:
 
 	// Fényforrás- ...
 	glm::vec4 m_lightPos = glm::vec4( 0.0f, 1.0f, 0.0f, 0.0f );
-
 	glm::vec3 m_La = glm::vec3( 0.125f );
 	glm::vec3 m_Ld = glm::vec3(1.0, 1.0, 1.0 );
 	glm::vec3 m_Ls = glm::vec3(1.0, 1.0, 1.0 );
@@ -130,5 +118,6 @@ protected:
 	void CleanTextures();
 	void InitSkyboxTextures();
 	void CleanSkyboxTextures();
+	void SetupDebugCallback();
 };
 

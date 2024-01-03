@@ -1,88 +1,22 @@
-#include <imgui.h>
-#include <sstream>
-#include <iostream>
-#include <GL/glew.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
-#include <imgui_impl_sdl2.h>
-#include <imgui_impl_opengl3.h>
+/*
+ * ELTE IK Számítógépes grafika
+ * World of Warships
+ * Sándor Balázs
+ * AZA6NL
+ */
+
+#include "Window.h"
 #include "WorldOfWarships.h"
 
 int main( int argc, char* args[] ) 
 {
-	SDL_LogSetPriority(SDL_LOG_CATEGORY_ERROR, SDL_LOG_PRIORITY_ERROR);
-	if ( SDL_Init( SDL_INIT_VIDEO ) == -1 )
-	{
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[SDL initialization] Error during the SDL initialization: %s", SDL_GetError());
+	Window window;
+
+	if (window.open() != 0) {
 		return 1;
 	}
 
-	std::atexit(SDL_Quit);
-			
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-	#ifdef _DEBUG 
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
-	#endif
-
-	SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE,         32);
-	SDL_GL_SetAttribute(SDL_GL_RED_SIZE,            8);
-	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,          8);
-	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,           8);
-	SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE,          8);
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER,		1);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,          24);
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
-	SDL_GL_SetAttribute(SDL_GL_ACCELERATED_VISUAL, 1);
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "2");
-
-	SDL_Window *win = nullptr;
-	win = SDL_CreateWindow( "WorldOfWarships", 100, 100, 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED);
-
-	if (win == nullptr)
-	{
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[Window creation] Error during the SDL initialization: %s", SDL_GetError());
-		return 1;
-	}
-
-	SDL_GLContext	context = SDL_GL_CreateContext(win);
-	if (context == nullptr)
-	{
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[OGL context creation] Error during the creation of the OGL context: %s", SDL_GetError());
-		return 1;
-	}	
-
-	SDL_GL_SetSwapInterval(1);
-
-	GLenum error = glewInit();
-	if ( error != GLEW_OK )
-	{
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[GLEW] Error during the initialization of glew.");
-		return 1;
-	}
-
-	int glVersion[2] = {-1, -1}; 
-	glGetIntegerv(GL_MAJOR_VERSION, &glVersion[0]); 
-	glGetIntegerv(GL_MINOR_VERSION, &glVersion[1]); 
-
-	SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Running OpenGL %d.%d", glVersion[0], glVersion[1]);
-
-	if ( glVersion[0] == -1 && glVersion[1] == -1 )
-	{
-		SDL_GL_DeleteContext(context);
-		SDL_DestroyWindow( win );
-
-		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[OGL context creation] Error during the inialization of the OGL context! Maybe one of the SDL_GL_SetAttribute(...) calls is erroneous.");
-		
-		return 1;
-	}
-
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGui::StyleColorsDark();
-	ImGui_ImplSDL2_InitForOpenGL(win, context);
-	ImGui_ImplOpenGL3_Init();
-
+	SDL_Window* sdlWindow = window.getSDLwindow();
 
 	{
 		bool quit = false;
@@ -92,8 +26,8 @@ int main( int argc, char* args[] )
 
 		if (!app.Init())
 		{
-			SDL_GL_DeleteContext(context);
-			SDL_DestroyWindow(win);
+			SDL_GL_DeleteContext(window.getSDLcontext());
+			SDL_DestroyWindow(sdlWindow);
 			SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[app.Init] Error during the initialization of the application!");
 			return 1;
 		}
@@ -119,8 +53,8 @@ int main( int argc, char* args[] )
 						if ( ( ev.key.keysym.sym == SDLK_RETURN )
 							 && ( ev.key.keysym.mod & KMOD_ALT ) && !( ev.key.keysym.mod & ( KMOD_SHIFT | KMOD_CTRL | KMOD_GUI ) ) )
 						{
-							Uint32 FullScreenSwitchFlag = ( SDL_GetWindowFlags( win ) & SDL_WINDOW_FULLSCREEN_DESKTOP ) ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP;
-							SDL_SetWindowFullscreen( win, FullScreenSwitchFlag );
+							Uint32 FullScreenSwitchFlag = ( SDL_GetWindowFlags(sdlWindow) & SDL_WINDOW_FULLSCREEN_DESKTOP ) ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP;
+							SDL_SetWindowFullscreen(sdlWindow, FullScreenSwitchFlag );
 						}
 						if ( !is_keyboard_captured )
 							app.KeyboardDown(ev.key);
@@ -149,14 +83,13 @@ int main( int argc, char* args[] )
 						if ( ( ev.window.event == SDL_WINDOWEVENT_SIZE_CHANGED ) || ( ev.window.event == SDL_WINDOWEVENT_SHOWN ) )
 						{
 							int w, h;
-							SDL_GetWindowSize( win, &w, &h );
+							SDL_GetWindowSize(sdlWindow, &w, &h );
 							app.Resize( w, h );
 						}
 						break;
 				}
 			}
 
-			
 			static Uint32 LastTick = SDL_GetTicks();
 			Uint32 CurrentTick = SDL_GetTicks();
 			SUpdateInfo updateInfo
@@ -177,15 +110,12 @@ int main( int argc, char* args[] )
 			ImGui::Render();
 
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-			SDL_GL_SwapWindow(win);
+			SDL_GL_SwapWindow(sdlWindow);
 		}
 		app.Clean();
 	} 
+	
+	window.close();
 
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplSDL2_Shutdown();
-	ImGui::DestroyContext();
-	SDL_GL_DeleteContext(context);
-	SDL_DestroyWindow( win );
 	return 0;
 }

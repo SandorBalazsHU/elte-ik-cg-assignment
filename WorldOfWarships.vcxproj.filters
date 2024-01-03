@@ -42,6 +42,9 @@
     <ClCompile Include="includes\ObjParser.cpp">
       <Filter>GL Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WorldOfWarships.h">
@@ -61,6 +64,9 @@
     </ClInclude>
     <ClInclude Include="includes\ParametricSurfaceMesh.hpp">
       <Filter>GL Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
