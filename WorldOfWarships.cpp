@@ -34,7 +34,7 @@ bool WorldOfWarships::Init()
 	}*/
 
 	initShaders();
-	InitGeometry();
+	initGeometry();
 	initTextures();
 
 	//
@@ -47,7 +47,7 @@ bool WorldOfWarships::Init()
 	glEnable(GL_DEPTH_TEST); // mélységi teszt bekapcsolása (takarás)
 
 	// kamera
-	m_camera.SetView(
+	camera.SetView(
 		glm::vec3(0.0, 25.0, 25.0),	// honnan nézzük a színteret	   - eye
 		glm::vec3(0.0, 0.0, 0.0),   // a színtér melyik pontját nézzük - at
 		glm::vec3(0.0, 1.0, 0.0));  // felfelé mutató irány a világban - up
@@ -58,7 +58,7 @@ bool WorldOfWarships::Init()
 void WorldOfWarships::Clean()
 {
 	cleanShaders();
-	CleanGeometry();
+	cleanGeometry();
 	cleanTextures();
 }
 
@@ -66,7 +66,7 @@ void WorldOfWarships::Update( const SUpdateInfo& updateInfo )
 {
 	elapsedTimeInSec = updateInfo.ElapsedTimeInSec;
 
-	m_camera.Update( updateInfo.DeltaTimeInSec );
+	camera.Update( updateInfo.DeltaTimeInSec );
 }
 
 void WorldOfWarships::Render()
@@ -78,7 +78,7 @@ void WorldOfWarships::Render()
 
 	// Suzanne
 
-	glBindVertexArray( m_SuzanneGPU.vaoID );
+	glBindVertexArray( shipGeom.vaoID );
 
 	// - Textúrák beállítása, minden egységre külön
 	glActiveTexture( GL_TEXTURE0 );
@@ -94,10 +94,10 @@ void WorldOfWarships::Render()
 	glUniformMatrix4fv( ul( "world" ),    1, GL_FALSE, glm::value_ptr( matWorld ) );
 	glUniformMatrix4fv( ul( "worldIT" ),  1, GL_FALSE, glm::value_ptr( glm::transpose( glm::inverse( matWorld ) ) ) );
 
-	glUniformMatrix4fv( ul( "viewProj" ), 1, GL_FALSE, glm::value_ptr( m_camera.GetViewProj() ) );
+	glUniformMatrix4fv( ul( "viewProj" ), 1, GL_FALSE, glm::value_ptr( camera.GetViewProj() ) );
 
 	// - Fényforrások beállítása
-	glUniform3fv( ul( "cameraPos" ), 1, glm::value_ptr( m_camera.GetEye() ) );
+	glUniform3fv( ul( "cameraPos" ), 1, glm::value_ptr( camera.GetEye() ) );
 	glUniform4fv( ul( "lightPos" ),  1, glm::value_ptr( m_lightPos ) );
 
 	glUniform3fv( ul( "La" ),		 1, glm::value_ptr( m_La ) );
@@ -120,7 +120,7 @@ void WorldOfWarships::Render()
 	glUniform1i( ul( "texImage" ), 0 );
 
 	glDrawElements( GL_TRIANGLES,    
-					m_SuzanneGPU.count,			 
+					shipGeom.count,			 
 					GL_UNSIGNED_INT,
 					nullptr );
 
@@ -128,7 +128,7 @@ void WorldOfWarships::Render()
 
 	glDisable(GL_CULL_FACE);
 
-	glBindVertexArray( m_waterGPU.vaoID );
+	glBindVertexArray( waterGeom.vaoID );
 
 	// - Textúrák beállítása, minden egységre külön
 	glActiveTexture( GL_TEXTURE0 );
@@ -148,10 +148,10 @@ void WorldOfWarships::Render()
 	glUniformMatrix4fv( ul( "world" ),    1, GL_FALSE, glm::value_ptr( matWorld ) );
 	glUniformMatrix4fv( ul( "worldIT" ),  1, GL_FALSE, glm::value_ptr( glm::transpose( glm::inverse( matWorld ) ) ) );
 
-	glUniformMatrix4fv( ul( "viewProj" ), 1, GL_FALSE, glm::value_ptr( m_camera.GetViewProj() ) );
+	glUniformMatrix4fv( ul( "viewProj" ), 1, GL_FALSE, glm::value_ptr( camera.GetViewProj() ) );
 
 	// - Fényforrások beállítása
-	glUniform3fv( ul( "cameraPos" ), 1, glm::value_ptr( m_camera.GetEye() ) );
+	glUniform3fv( ul( "cameraPos" ), 1, glm::value_ptr( camera.GetEye() ) );
 	glUniform4fv( ul( "lightPos" ),  1, glm::value_ptr( m_lightPos ) );
 
 	glUniform3fv( ul( "La" ),		 1, glm::value_ptr( m_La ) );
@@ -177,7 +177,7 @@ void WorldOfWarships::Render()
 	glUniform1i(ul("texNormalMap"), 1);
 
 	glDrawElements( GL_TRIANGLES,    
-					m_waterGPU.count,			 
+					waterGeom.count,			 
 					GL_UNSIGNED_INT,
 					nullptr );
 
@@ -188,7 +188,7 @@ void WorldOfWarships::Render()
 	//
 
 	// - VAO
-	glBindVertexArray( m_SkyboxGPU.vaoID );
+	glBindVertexArray( skyBoxGeom.vaoID );
 
 	// - Textura
 	glActiveTexture( GL_TEXTURE0 );
@@ -198,8 +198,8 @@ void WorldOfWarships::Render()
 	glUseProgram( shaderSkyBox );
 
 	// - uniform parameterek
-	glUniformMatrix4fv( ul("world"),    1, GL_FALSE, glm::value_ptr( glm::translate( m_camera.GetEye() ) ) );
-	glUniformMatrix4fv( ul("viewProj"), 1, GL_FALSE, glm::value_ptr( m_camera.GetViewProj() ) );
+	glUniformMatrix4fv( ul("world"),    1, GL_FALSE, glm::value_ptr( glm::translate( camera.GetEye() ) ) );
+	glUniformMatrix4fv( ul("viewProj"), 1, GL_FALSE, glm::value_ptr( camera.GetViewProj() ) );
 
 	// - textúraegységek beállítása
 	glUniform1i( ul( "skyboxTexture" ), 0 );
@@ -212,7 +212,7 @@ void WorldOfWarships::Render()
 	glDepthFunc(GL_LEQUAL);
 
 	// - Rajzolas
-	glDrawElements( GL_TRIANGLES, m_SkyboxGPU.count, GL_UNSIGNED_INT, nullptr );
+	glDrawElements( GL_TRIANGLES, skyBoxGeom.count, GL_UNSIGNED_INT, nullptr );
 
 	glDepthFunc(prevDepthFnc);
 

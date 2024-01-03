@@ -43,17 +43,17 @@ void WorldOfWarships::keyboardDown(const SDL_KeyboardEvent& key)
 			glPolygonMode(GL_FRONT_AND_BACK, polygonMode);
 		}
 	}
-	m_camera.KeyboardDown(key);
+	camera.KeyboardDown(key);
 };
 
 void WorldOfWarships::keyboardUp(const SDL_KeyboardEvent& key)
 {
-	m_camera.KeyboardUp(key);
+	camera.KeyboardUp(key);
 };
 
 void WorldOfWarships::mouseMove(const SDL_MouseMotionEvent& mouse)
 {
-	m_camera.MouseMove(mouse);
+	camera.MouseMove(mouse);
 };
 
 void WorldOfWarships::mouseDown(const SDL_MouseButtonEvent& mouse)
@@ -66,11 +66,11 @@ void WorldOfWarships::mouseUp(const SDL_MouseButtonEvent& mouse)
 
 void WorldOfWarships::mouseWheel(const SDL_MouseWheelEvent& wheel)
 {
-	m_camera.MouseWheel(wheel);
+	camera.MouseWheel(wheel);
 };
 
 void WorldOfWarships::resize(int _w, int _h)
 {
 	glViewport(0, 0, _w, _h);
-	m_camera.Resize(_w, _h);
+	camera.Resize(_w, _h);
 };

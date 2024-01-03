@@ -49,57 +49,20 @@ public:
 	void mouseWheel(const SDL_MouseWheelEvent&);
 	void resize(int, int);
 protected:
+
+	//water
 	float waterWidth = 2000.0f;
 	float waterHight = 2000.0f;
 	int waterResX = 1000;
 	int waterResY = 1000;
-
 	float elapsedTimeInSec = 0.0f;
 
-	Camera m_camera;
+	//shaders
+	GLuint shaderBase = 0;
+	GLuint shaderSkyBox = 0;
+	GLuint shaderWater = 0;
 
-	GLint ul( const char* uniformName ) noexcept;
-
-	// shaderekhez szükséges változók
-	GLuint shaderBase = 0;		  // shaderek programja
-	GLuint shaderSkyBox = 0; // skybox programja
-	GLuint shaderWater = 0;   // viz programja
-
-	// Fényforrás- ...
-	glm::vec4 m_lightPos = glm::vec4( 0.0f, 1.0f, 0.0f, 0.0f );
-	glm::vec3 m_La = glm::vec3( 0.125f );
-	glm::vec3 m_Ld = glm::vec3(1.0, 1.0, 1.0 );
-	glm::vec3 m_Ls = glm::vec3(1.0, 1.0, 1.0 );
-
-	float m_lightConstantAttenuation    = 1.0;
-	float m_lightLinearAttenuation      = 0.0;
-	float m_lightQuadraticAttenuation   = 0.0;
-
-	// ... és anyagjellemzők
-	glm::vec3 m_Ka = glm::vec3( 1.0 );
-	glm::vec3 m_Kd = glm::vec3( 1.0 );
-	glm::vec3 m_Ks = glm::vec3( 1.0 );
-
-	float m_Shininess = 1.0;
-
-	// Shaderek inicializálása, és törtlése
-	void initShaders();
-	void cleanShaders();
-
-	// Geometriával kapcsolatos változók
-	OGLObject m_SuzanneGPU = {};
-	OGLObject m_SkyboxGPU = {};
-	OGLObject m_waterGPU = {};
-	OGLObject m_quadGPU = {};
-
-	// Geometria inicializálása, és törtlése
-	void InitGeometry();
-	void CleanGeometry();
-	void InitSkyboxGeometry();
-	void CleanSkyboxGeometry();
-
-	// Textúrázás, és változói
-
+	//textures
 	GLuint shipTexture = 0;
 	GLuint shipTuretTexture = 0;
 	GLuint shipCanonTexture = 0;
@@ -107,7 +70,40 @@ protected:
 	GLuint waterTexture = 0;
 	GLuint waterNormalMapTexture = 0;
 
+	//cam
+	Camera camera;
+
+	//light
+	glm::vec4 m_lightPos = glm::vec4( 0.0f, 1.0f, 0.0f, 0.0f );
+	glm::vec3 m_La = glm::vec3( 0.125f );
+	glm::vec3 m_Ld = glm::vec3(1.0, 1.0, 1.0 );
+	glm::vec3 m_Ls = glm::vec3(1.0, 1.0, 1.0 );
+	float m_lightConstantAttenuation    = 1.0;
+	float m_lightLinearAttenuation      = 0.0;
+	float m_lightQuadraticAttenuation   = 0.0;
+
+	//material
+	glm::vec3 m_Ka = glm::vec3( 1.0 );
+	glm::vec3 m_Kd = glm::vec3( 1.0 );
+	glm::vec3 m_Ks = glm::vec3( 1.0 );
+	float m_Shininess = 1.0;
+
+	//geom
+	OGLObject shipGeom = {};
+	OGLObject shipCanonGeom = {};
+	OGLObject shipTuretGeom = {};
+	OGLObject skyBoxGeom = {};
+	OGLObject waterGeom = {};
+
 	void initTextures();
 	void cleanTextures();
+	void initShaders();
+	void cleanShaders();
+	void initGeometry();
+	void cleanGeometry();
+	void initSkyboxGeometry();
+	void cleanSkyboxGeometry();
 	void setupDebugCallback();
+
+	GLint ul(const char* uniformName) noexcept;
 };

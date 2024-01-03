@@ -25,7 +25,7 @@ struct Blank
 	}
 };
 
-void WorldOfWarships::InitGeometry()
+void WorldOfWarships::initGeometry()
 {
 	const std::initializer_list<VertexAttributeDescriptor> vertexAttribList =
 	{
@@ -35,44 +35,44 @@ void WorldOfWarships::InitGeometry()
 	};
 
 	//OBJ
-	MeshObject<Vertex> suzanneMeshCPU = ObjParser::parse("Assets/ship.obj");
-	m_SuzanneGPU = CreateGLObjectFromMesh(suzanneMeshCPU, vertexAttribList);
+	MeshObject<Vertex> shipMesh = ObjParser::parse("Assets/ship.obj");
+	shipGeom = CreateGLObjectFromMesh(shipMesh, vertexAttribList);
 
 	// Skybox
-	InitSkyboxGeometry();
+	initSkyboxGeometry();
 
 	// Water
-	MeshObject<glm::vec2> waterCPU;
+	MeshObject<glm::vec2> waterMesh;
 	{
 		MeshObject<Vertex> surfaceMeshCPU = GetParamSurfMesh(Blank(), waterResX, waterResY);
 		for (const Vertex& v : surfaceMeshCPU.vertexArray)
 		{
-			waterCPU.vertexArray.emplace_back(glm::vec2(v.position.x, v.position.y));
+			waterMesh.vertexArray.emplace_back(glm::vec2(v.position.x, v.position.y));
 		}
-		waterCPU.indexArray = surfaceMeshCPU.indexArray;
+		waterMesh.indexArray = surfaceMeshCPU.indexArray;
 	}
-	m_waterGPU = CreateGLObjectFromMesh(waterCPU, { { 0, offsetof(glm::vec2,x), 2, GL_FLOAT} });
+	waterGeom = CreateGLObjectFromMesh(waterMesh, { { 0, offsetof(glm::vec2,x), 2, GL_FLOAT} });
 }
 
-void WorldOfWarships::CleanGeometry()
+void WorldOfWarships::cleanGeometry()
 {
-	CleanOGLObject(m_SuzanneGPU);
-	CleanSkyboxGeometry();
+	CleanOGLObject(shipGeom);
+	cleanSkyboxGeometry();
 }
 
-void WorldOfWarships::InitSkyboxGeometry()
+void WorldOfWarships::initSkyboxGeometry()
 {
-	// skybox geo
-	MeshObject<glm::vec3> skyboxCPU =
+	//skybox geom
+	MeshObject<glm::vec3> skyboxMesh =
 	{
 		std::vector<glm::vec3>
 		{
-		// hátsó lap
-		glm::vec3(-1, -1, -1),
-		glm::vec3(1, -1, -1),
-		glm::vec3(1,  1, -1),
-		glm::vec3(-1,  1, -1),
-			// elülsõ lap
+			//back
+			glm::vec3(-1, -1, -1),
+			glm::vec3(1, -1, -1),
+			glm::vec3(1,  1, -1),
+			glm::vec3(-1,  1, -1),
+			//front
 			glm::vec3(-1, -1, 1),
 			glm::vec3(1, -1, 1),
 			glm::vec3(1,  1, 1),
@@ -81,31 +81,31 @@ void WorldOfWarships::InitSkyboxGeometry()
 
 		std::vector<GLuint>
 		{
-		// hátsó lap
+		//back
 		0, 1, 2,
 		2, 3, 0,
-			// elülsõ lap
+			//front
 			4, 6, 5,
 			6, 4, 7,
-			// bal
+			//left
 			0, 3, 4,
 			4, 3, 7,
-			// jobb
+			//right
 			1, 5, 2,
 			5, 6, 2,
-			// alsó
+			//bottom
 			1, 0, 4,
 			1, 4, 5,
-			// felsõ
+			//top
 			3, 2, 6,
 			3, 6, 7,
 		}
 	};
 
-	m_SkyboxGPU = CreateGLObjectFromMesh(skyboxCPU, { { 0, offsetof(glm::vec3,x), 3, GL_FLOAT } });
+	skyBoxGeom = CreateGLObjectFromMesh(skyboxMesh, { { 0, offsetof(glm::vec3,x), 3, GL_FLOAT } });
 }
 
-void WorldOfWarships::CleanSkyboxGeometry()
+void WorldOfWarships::cleanSkyboxGeometry()
 {
-	CleanOGLObject(m_SkyboxGPU);
+	CleanOGLObject(skyBoxGeom);
 }
