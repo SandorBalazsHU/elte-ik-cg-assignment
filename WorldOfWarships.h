@@ -77,7 +77,6 @@ private:
 	OGLObject waterGeom = {};
 	OGLObject mountainsGeom = {};
 
-
 	//textures
 	GLuint shipTexture = 0;
 	GLuint shipTuretTexture = 0;
@@ -91,20 +90,7 @@ private:
 	//cam
 	Camera camera;
 
-	//light
-	glm::vec4 m_lightPos = glm::vec4( 0.0f, 1.0f, 0.0f, 0.0f );
-	glm::vec3 m_La = glm::vec3( 0.125f );
-	glm::vec3 m_Ld = glm::vec3(1.0, 1.0, 1.0 );
-	glm::vec3 m_Ls = glm::vec3(1.0, 1.0, 1.0 );
-	float m_lightConstantAttenuation    = 1.0;
-	float m_lightLinearAttenuation      = 0.0;
-	float m_lightQuadraticAttenuation   = 0.0;
-
-	//material
-	glm::vec3 m_Ka = glm::vec3( 1.0 );
-	glm::vec3 m_Kd = glm::vec3( 1.0 );
-	glm::vec3 m_Ks = glm::vec3( 1.0 );
-	float m_Shininess = 1.0;
+	void setLights();
 
 	void sceneRender();
 	void drawSceneObject(OGLObject& geom, GLuint& texture);

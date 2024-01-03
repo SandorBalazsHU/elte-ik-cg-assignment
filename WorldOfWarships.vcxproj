@@ -93,6 +93,7 @@
     <ClCompile Include="includes\ObjParser.cpp" />
     <ClCompile Include="WorldOfWarshipsGeom.cpp" />
     <ClCompile Include="WorldOfWarshipsLighthouse.cpp" />
+    <ClCompile Include="WorldOfWarshipsLights.cpp" />
     <ClCompile Include="WorldOfWarshipsMountains.cpp" />
     <ClCompile Include="WorldOfWarshipsPrep.cpp" />
     <ClCompile Include="WorldOfWarshipsScene.cpp" />
@@ -101,6 +102,7 @@
     <ClCompile Include="WorldOfWarshipsWater.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="WorldOfWarshipsLights.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="WorldOfWarships.h" />
     <ClInclude Include="includes\SDL_GLDebugMessageCallback.h" />

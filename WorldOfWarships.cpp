@@ -26,7 +26,7 @@ bool WorldOfWarships::init()
 	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
 
-	camera.SetView(glm::vec3(0.0, 25.0, 25.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+	camera.SetView(glm::vec3(0.0, 40.0, 25.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
 	return true;
 };
 
@@ -53,7 +53,7 @@ void WorldOfWarships::render()
 	waterRender();
 	skyBoxRender();
 	renderClean();
-}
+};
 
 void WorldOfWarships::renderClean() {
 	glUseProgram(0);
@@ -64,48 +64,8 @@ void WorldOfWarships::renderClean() {
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
 	glBindVertexArray(0);
-}
+};
 
 void WorldOfWarships::renderGUI()
 {
-	//ImGui::ShowDemoWindow();
-	if ( ImGui::Begin( "Lighting settings" ) )
-	{		
-		ImGui::InputFloat("Shininess", &m_Shininess, 0.1f, 1.0f, "%.1f" );
-		static float Kaf = 1.0f;
-		static float Kdf = 1.0f;
-		static float Ksf = 1.0f;
-		if ( ImGui::SliderFloat( "Ka", &Kaf, 0.0f, 1.0f ) )
-		{
-			m_Ka = glm::vec3( Kaf );
-		}
-		if ( ImGui::SliderFloat( "Kd", &Kdf, 0.0f, 1.0f ) )
-		{
-			m_Kd = glm::vec3( Kdf );
-		}
-		if ( ImGui::SliderFloat( "Ks", &Ksf, 0.0f, 1.0f ) )
-		{
-			m_Ks = glm::vec3( Ksf );
-		}
-
-		{
-			static glm::vec2 lightPosXZ = glm::vec2( 0.0f );
-			lightPosXZ = glm::vec2( m_lightPos.x, m_lightPos.z );
-			if ( ImGui::SliderFloat2( "Light Position XZ", glm::value_ptr( lightPosXZ ), -1.0f, 1.0f ) )
-			{
-				float lightPosL2 = lightPosXZ.x * lightPosXZ.x + lightPosXZ.y * lightPosXZ.y;
-				if ( lightPosL2 > 1.0f ) // Ha kívülre esne a körön, akkor normalizáljuk
-				{
-					lightPosXZ /= sqrtf( lightPosL2 );
-					lightPosL2 = 1.0f;
-				}
-
-				m_lightPos.x = lightPosXZ.x;
-				m_lightPos.z = lightPosXZ.y;
-				m_lightPos.y = sqrtf( 1.0f - lightPosL2 );
-			}
-			ImGui::LabelText( "Light Position Y", "%f", m_lightPos.y );
-		}
-	}
-	ImGui::End();
-}
+};

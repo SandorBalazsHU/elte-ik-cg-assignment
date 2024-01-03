@@ -8,9 +8,6 @@
 #include "WorldOfWarships.h"
 
 void WorldOfWarships::waterRender() {
-	//disable baceók
-	//glDisable(GL_CULL_FACE);
-
 	//geom
 	glBindVertexArray(waterGeom.vaoID);
 
@@ -33,22 +30,7 @@ void WorldOfWarships::waterRender() {
 	glUniformMatrix4fv(ul("viewProj"), 1, GL_FALSE, glm::value_ptr(camera.GetViewProj()));
 
 	//light
-	glUniform3fv(ul("cameraPos"), 1, glm::value_ptr(camera.GetEye()));
-	glUniform4fv(ul("lightPos"), 1, glm::value_ptr(m_lightPos));
-	glUniform3fv(ul("La"), 1, glm::value_ptr(m_La));
-	glUniform3fv(ul("Ld"), 1, glm::value_ptr(m_Ld));
-	glUniform3fv(ul("Ls"), 1, glm::value_ptr(m_Ls));
-	glUniform1f(ul("lightConstantAttenuation"), m_lightConstantAttenuation);
-	glUniform1f(ul("lightLinearAttenuation"), m_lightLinearAttenuation);
-	glUniform1f(ul("lightQuadraticAttenuation"), m_lightQuadraticAttenuation);
-
-	//mat
-	glUniform3fv(ul("Ka"), 1, glm::value_ptr(m_Ka));
-	glUniform3fv(ul("Kd"), 1, glm::value_ptr(m_Kd));
-	glUniform3fv(ul("Ks"), 1, glm::value_ptr(m_Ks));
-
-	//gloss
-	glUniform1f(ul("Shininess"), m_Shininess);
+	setLights();
 
 	//shader parameters
 	glUniform1f(ul("elapsedTimeInSec"), elapsedTimeInSec);
@@ -64,7 +46,4 @@ void WorldOfWarships::waterRender() {
 		waterGeom.count,
 		GL_UNSIGNED_INT,
 		nullptr);
-
-	//enable back
-	//glEnable(GL_CULL_FACE);
 };
