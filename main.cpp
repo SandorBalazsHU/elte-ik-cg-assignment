@@ -20,14 +20,13 @@ int main( int argc, char* args[] )
 
 	{
 		bool quit = false;
-		SDL_Event ev;
+		SDL_Event event;
 
-		WorldOfWarships app;
+		WorldOfWarships WorldOfWarships;
 
-		if (!app.Init())
+		if (!WorldOfWarships.Init())
 		{
-			SDL_GL_DeleteContext(window.getSDLcontext());
-			SDL_DestroyWindow(sdlWindow);
+			window.close();
 			SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[app.Init] Error during the initialization of the application!");
 			return 1;
 		}
@@ -35,56 +34,56 @@ int main( int argc, char* args[] )
 		while (!quit)
 		{
 			// amíg van feldolgozandó üzenet dolgozzuk fel mindet:
-			while ( SDL_PollEvent(&ev) )
+			while ( SDL_PollEvent(&event) )
 			{
-				ImGui_ImplSDL2_ProcessEvent(&ev);
+				ImGui_ImplSDL2_ProcessEvent(&event);
 				bool is_mouse_captured    = ImGui::GetIO().WantCaptureMouse;    //kell-e az imgui-nak az egér
 				bool is_keyboard_captured = ImGui::GetIO().WantCaptureKeyboard;	//kell-e az imgui-nak a billentyűzet
 
-				switch (ev.type)
+				switch (event.type)
 				{
 					case SDL_QUIT:
 						quit = true;
 						break;
 					case SDL_KEYDOWN:
-						if ( ev.key.keysym.sym == SDLK_ESCAPE )
+						if (event.key.keysym.sym == SDLK_ESCAPE )
 							quit = true;
 						// ALT + ENTER vált teljes képernyőre, és vissza.
-						if ( ( ev.key.keysym.sym == SDLK_RETURN )
-							 && ( ev.key.keysym.mod & KMOD_ALT ) && !( ev.key.keysym.mod & ( KMOD_SHIFT | KMOD_CTRL | KMOD_GUI ) ) )
+						if ( (event.key.keysym.sym == SDLK_RETURN )
+							 && (event.key.keysym.mod & KMOD_ALT ) && !(event.key.keysym.mod & ( KMOD_SHIFT | KMOD_CTRL | KMOD_GUI ) ) )
 						{
 							Uint32 FullScreenSwitchFlag = ( SDL_GetWindowFlags(sdlWindow) & SDL_WINDOW_FULLSCREEN_DESKTOP ) ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP;
 							SDL_SetWindowFullscreen(sdlWindow, FullScreenSwitchFlag );
 						}
 						if ( !is_keyboard_captured )
-							app.KeyboardDown(ev.key);
+							WorldOfWarships.KeyboardDown(event.key);
 						break;
 					case SDL_KEYUP:
 						if ( !is_keyboard_captured )
-							app.KeyboardUp(ev.key);
+							WorldOfWarships.KeyboardUp(event.key);
 						break;
 					case SDL_MOUSEBUTTONDOWN:
 						if ( !is_mouse_captured )
-							app.MouseDown(ev.button);
+							WorldOfWarships.MouseDown(event.button);
 						break;
 					case SDL_MOUSEBUTTONUP:
 						if ( !is_mouse_captured )
-							app.MouseUp(ev.button);
+							WorldOfWarships.MouseUp(event.button);
 						break;
 					case SDL_MOUSEWHEEL:
 						if ( !is_mouse_captured )
-							app.MouseWheel(ev.wheel);
+							WorldOfWarships.MouseWheel(event.wheel);
 						break;
 					case SDL_MOUSEMOTION:
 						if ( !is_mouse_captured )
-							app.MouseMove(ev.motion);
+							WorldOfWarships.MouseMove(event.motion);
 						break;
 					case SDL_WINDOWEVENT:
-						if ( ( ev.window.event == SDL_WINDOWEVENT_SIZE_CHANGED ) || ( ev.window.event == SDL_WINDOWEVENT_SHOWN ) )
+						if ( (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED ) || ( event.window.event == SDL_WINDOWEVENT_SHOWN ) )
 						{
 							int w, h;
 							SDL_GetWindowSize(sdlWindow, &w, &h );
-							app.Resize( w, h );
+							WorldOfWarships.Resize( w, h );
 						}
 						break;
 				}
@@ -99,20 +98,20 @@ int main( int argc, char* args[] )
 			};
 			LastTick = CurrentTick;
 
-			app.Update( updateInfo );
-			app.Render();
+			WorldOfWarships.Update( updateInfo );
+			WorldOfWarships.Render();
 
 			ImGui_ImplOpenGL3_NewFrame();
 			ImGui_ImplSDL2_NewFrame();
 
 			ImGui::NewFrame();
-			app.RenderGUI();
+			WorldOfWarships.RenderGUI();
 			ImGui::Render();
 
 			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 			SDL_GL_SwapWindow(sdlWindow);
 		}
-		app.Clean();
+		WorldOfWarships.Clean();
 	} 
 	
 	window.close();
