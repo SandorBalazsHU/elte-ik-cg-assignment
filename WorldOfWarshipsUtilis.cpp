@@ -42,6 +42,22 @@ void WorldOfWarships::keyboardDown(const SDL_KeyboardEvent& key)
 			GLenum polygonMode = (polygonModeFrontAndBack[0] != GL_FILL ? GL_FILL : GL_LINE);
 			glPolygonMode(GL_FRONT_AND_BACK, polygonMode);
 		}
+		if (key.keysym.sym == SDLK_UP)
+		{
+			shipAccelerate(allyShips[playerShipID]);
+		}
+		if (key.keysym.sym == SDLK_DOWN)
+		{
+			shipSlow(allyShips[playerShipID]);
+		}
+		/*if (key.keysym.sym == SDLK_UP)
+		{
+			allyShips[playerShipID].velocity.x += 5.0f;
+		}
+		if (key.keysym.sym == SDLK_UP)
+		{
+			allyShips[playerShipID].velocity.x += 5.0f;
+		}*/
 	}
 	camera.KeyboardDown(key);
 };

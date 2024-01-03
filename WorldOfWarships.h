@@ -8,6 +8,7 @@
 #pragma once
 
 #include <string>
+#include <vector>
 #include <imgui.h>
 #include "Camera.h"
 #include <GL/glew.h>
@@ -26,6 +27,17 @@ struct SUpdateInfo
 {
 	float ElapsedTimeInSec = 0.0f;
 	float DeltaTimeInSec   = 0.0f;
+};
+
+struct Ship
+{
+	Ship() : position(glm::vec3(0)), velocity(glm::vec3(0)), turetAngle(0), canonAngle(0), hp(100) {};
+	glm::vec3 position;
+	glm::vec3 velocity;
+	float turetAngle;
+	float canonAngle;
+	int hp;
+	int team;
 };
 
 class WorldOfWarships
@@ -50,6 +62,17 @@ public:
 	void resize(int, int);
 
 private:
+	
+	//Ships
+	int numberOfallyShips = 5;
+	int numberOfenemyShips = 5;
+	std::vector<Ship> allyShips;
+	std::vector<Ship> enemyShips;
+	int playerShipID = 2;
+	float shipAcceleration = 1.5f;
+	float shipSlowing = 0.9f;
+	glm::vec3 startingVelocity = glm::vec3(0.01f, 0.0f, 0.0f);
+
 	//water
 	float waterWidth = 1000.0f;
 	float waterHight = 1000.0f;
@@ -90,10 +113,20 @@ private:
 	//cam
 	Camera camera;
 
+	void initScene();
+	void rotateTuret(float rotation, Ship &currentShip);
+	void rotateCanon(float rotation, Ship &currentShip);
+	void shipAccelerate(Ship &currentShip);
+	void shipSlow(Ship &currentShip);
+	void shipRotateLeft(Ship &currentShip);
+	void shipRotateRight(Ship &currentShip);
+	void updateScene();
+	glm::mat4 rotateShip(Ship &currentShip);
+
 	void setLights();
 
 	void sceneRender();
-	void drawSceneObject(OGLObject& geom, GLuint& texture);
+	void drawSceneObject(glm::vec3 pos, glm::mat4 rotation, OGLObject& geom, GLuint& texture);
 	void waterRender();
 	void skyBoxRender();
 	void mountainsRender();

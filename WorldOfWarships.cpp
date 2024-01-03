@@ -21,12 +21,13 @@ bool WorldOfWarships::init()
 	initShaders();
 	initGeometry();
 	initTextures();
+	initScene();
 
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
 
-	camera.SetView(glm::vec3(0.0, 40.0, 25.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+	camera.SetView(glm::vec3(0.0, 100.0, 0.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
 	return true;
 };
 
@@ -41,6 +42,7 @@ void WorldOfWarships::update(const SUpdateInfo& updateInfo)
 {
 	elapsedTimeInSec = updateInfo.ElapsedTimeInSec;
 	camera.Update(updateInfo.DeltaTimeInSec);
+	updateScene();
 };
 
 void WorldOfWarships::render()
@@ -48,9 +50,10 @@ void WorldOfWarships::render()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	sceneRender();
-	mountainsRender();
+
 	lighthouseRender();
 	waterRender();
+	mountainsRender();
 	skyBoxRender();
 	renderClean();
 };

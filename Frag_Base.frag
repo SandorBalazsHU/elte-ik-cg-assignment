@@ -134,5 +134,6 @@ void main()
 				materialSpecular_02,
 				shininess_02);
 
-	fs_out_col = vec4( light00+light01+light02, 1.0 ) * texture(texImage, vs_out_tex);
+	//fs_out_col = vec4( light00+light01+light02, 1.0 ) * texture(texImage, vs_out_tex);
+	fs_out_col = vec4( light00, 1.0 ) * texture(texImage, vs_out_tex);
 }

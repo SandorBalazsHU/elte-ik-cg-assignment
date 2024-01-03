@@ -17,7 +17,7 @@ glm::vec3 materialSpecular_00 = glm::vec3(1.0);
 float shininess_00 = 1.0;
 
 //light01
-glm::vec4 lightPos01 = glm::vec4(500.0f - 20.0f, 5.0f, 500.0f - 20.0f, 1.0);
+glm::vec4 lightPos01 = glm::vec4(500.0f - 20.0f, 55.0f, 500.0f - 20.0f, 1.0);
 
 glm::vec4 lightPos_01 = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 
@@ -35,7 +35,7 @@ glm::vec3 materialSpecular_01 = glm::vec3(1.0);
 float shininess_01 = 1.0;
 
 //light02
-glm::vec4 lightPos02 = glm::vec4(500.0f - 20.0f, 5.0f, 500.0f - 20.0f, 1.0);
+glm::vec4 lightPos02 = glm::vec4(500.0f - 20.0f, 55.0f, 500.0f - 20.0f, 1.0);
 
 glm::vec4 lightPos_02 = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 
