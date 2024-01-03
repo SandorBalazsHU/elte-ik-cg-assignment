@@ -38,6 +38,10 @@ void WorldOfWarships::initTextures()
 	TextureFromFile(shipCanonTexture, "Assets/ship_canon.png");
 	SetupTextureSampling(GL_TEXTURE_2D, shipCanonTexture);
 
+	glGenTextures(1, &lightHouseTexture);
+	TextureFromFile(lightHouseTexture, "Assets/lighthouse.png");
+	SetupTextureSampling(GL_TEXTURE_2D, lightHouseTexture);
+
 	glGenTextures(1, &waterTexture);
 	TextureFromFile(waterTexture, "Assets/water_texture.jpg");
 	SetupTextureSampling(GL_TEXTURE_2D, waterTexture);

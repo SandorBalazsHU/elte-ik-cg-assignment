@@ -9,9 +9,12 @@
 
 void WorldOfWarships::sceneRender() {
 	drawSceneObject(shipGeom, shipTexture);
+	drawSceneObject(shipCanonGeom, shipCanonTexture);
+	drawSceneObject(shipTuretGeom, shipTuretTexture);
 }
 
 void WorldOfWarships::drawSceneObject(OGLObject &geom, GLuint &texture) {
+
 	//geom
 	glBindVertexArray(geom.vaoID);
 
@@ -55,7 +58,7 @@ void WorldOfWarships::drawSceneObject(OGLObject &geom, GLuint &texture) {
 
 	//draw
 	glDrawElements(GL_TRIANGLES,
-		shipGeom.count,
+		geom.count,
 		GL_UNSIGNED_INT,
 		nullptr);
 };

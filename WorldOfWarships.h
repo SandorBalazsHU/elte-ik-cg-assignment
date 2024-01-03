@@ -74,6 +74,7 @@ private:
 	GLuint shipTexture = 0;
 	GLuint shipTuretTexture = 0;
 	GLuint shipCanonTexture = 0;
+	GLuint lightHouseTexture = 0;
 	GLuint skyboxTexture = 0;
 	GLuint waterTexture = 0;
 	GLuint waterNormalMapTexture = 0;
