@@ -9,7 +9,7 @@
 
 void WorldOfWarships::waterRender() {
 	//disable baceók
-	glDisable(GL_CULL_FACE);
+	//glDisable(GL_CULL_FACE);
 
 	//geom
 	glBindVertexArray(waterGeom.vaoID);
@@ -66,5 +66,5 @@ void WorldOfWarships::waterRender() {
 		nullptr);
 
 	//enable back
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 };
