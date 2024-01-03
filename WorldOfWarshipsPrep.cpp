@@ -24,6 +24,7 @@ void WorldOfWarships::cleanShaders()
 	glDeleteProgram(shaderBase);
 	glDeleteProgram(shaderWater);
 	glDeleteProgram(shaderSkyBox);
+	glDeleteProgram(mountainsShader);
 }
 
 void WorldOfWarships::initTextures()
@@ -43,6 +44,10 @@ void WorldOfWarships::initTextures()
 	glGenTextures(1, &lightHouseTexture);
 	TextureFromFile(lightHouseTexture, "Assets/lighthouse.png");
 	SetupTextureSampling(GL_TEXTURE_2D, lightHouseTexture);
+
+	glGenTextures(1, &mountainsTexture);
+	TextureFromFile(mountainsTexture, "Assets/mountains.png");
+	SetupTextureSampling(GL_TEXTURE_2D, mountainsTexture);
 
 	glGenTextures(1, &waterTexture);
 	TextureFromFile(waterTexture, "Assets/water_texture.jpg");
@@ -76,6 +81,7 @@ void WorldOfWarships::cleanTextures()
 	glDeleteTextures(1, &shipTexture);
 	glDeleteTextures(1, &shipTuretTexture);
 	glDeleteTextures(1, &shipCanonTexture);
+	glDeleteTextures(1, &mountainsTexture);
 	glDeleteTextures(1, &waterTexture);
 	glDeleteTextures(1, &waterNormalMapTexture);
 	glDeleteTextures(1, &skyboxTexture);

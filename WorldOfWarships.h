@@ -51,15 +51,17 @@ public:
 
 private:
 	//water
-	float waterWidth = 2000.0f;
-	float waterHight = 2000.0f;
+	float waterWidth = 1000.0f;
+	float waterHight = 1000.0f;
 	int waterResX = 1000;
 	int waterResY = 1000;
 	float elapsedTimeInSec = 0.0f;
 
 	//mountains
-	int mountainsResX = 1000;
-	int mountainsResY = 1000;
+	float mountainsWidth = 20.0f;
+	float mountainsHight = 20.0f;
+	int mountainsResX = 100;
+	int mountainsResY = 100;
 
 	//shaders
 	GLuint shaderBase = 0;
@@ -85,6 +87,7 @@ private:
 	GLuint skyboxTexture = 0;
 	GLuint waterTexture = 0;
 	GLuint waterNormalMapTexture = 0;
+	GLuint mountainsTexture = 0;
 
 	//cam
 	Camera camera;
@@ -108,6 +111,8 @@ private:
 	void drawSceneObject(OGLObject& geom, GLuint& texture);
 	void waterRender();
 	void skyBoxRender();
+	void mountainsRender();
+	void drawMountain(glm::mat4 matWorld);
 	void renderClean();
 
 	void initTextures();

@@ -50,6 +50,7 @@ void WorldOfWarships::render()
 	sceneRender();
 	waterRender();
 	skyBoxRender();
+	mountainsRender();
 	renderClean();
 }
 

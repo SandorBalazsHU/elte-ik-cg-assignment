@@ -17,7 +17,6 @@ uniform float waterHight = 0.0;
 
 vec3 GetPos(float u, float v)
 {
-	float waveHight = 2.0;
 	vec3 pos = vec3(-waterWidth/2.0, 0.0, waterHight/2.0) + vec3( waterWidth, 0.0, -waterHight) * vec3(u, 0.0, v);
 	pos.y = sin( (pos.z + elapsedTimeInSec) / 8.0) + sin( (pos.y + pos.x + elapsedTimeInSec) / 6.0);
 	return pos;

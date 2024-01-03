@@ -92,6 +92,7 @@
     <ClCompile Include="includes\Camera.cpp" />
     <ClCompile Include="includes\ObjParser.cpp" />
     <ClCompile Include="WorldOfWarshipsGeom.cpp" />
+    <ClCompile Include="WorldOfWarshipsMountains.cpp" />
     <ClCompile Include="WorldOfWarshipsPrep.cpp" />
     <ClCompile Include="WorldOfWarshipsScene.cpp" />
     <ClCompile Include="WorldOfWarshipsSky.cpp" />

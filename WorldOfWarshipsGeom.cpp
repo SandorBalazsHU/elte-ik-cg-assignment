@@ -5,6 +5,9 @@
  * AZA6NL
  */
 
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
 #include "WorldOfWarships.h"
 
 struct Blank
@@ -27,10 +30,26 @@ struct Blank
 
 struct Mountains
 {
+
+	float getRandomFloat(float min, float max)  const noexcept {
+		return min + static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX / (max - min));
+	}
+
+	//https://www.wolframalpha.com/input?i=%28%28sin%28%28%28x-3%2C2%29%5E2%29%2B1%29%2B1%29*%28sin%28y-1%2C1%29%2B1%29%29
 	glm::vec3 GetPos(float u, float v) const noexcept
 	{
-		glm::vec3 pos = glm::vec3(-10.0, 0.0, 10.0) + glm::vec3(20.0, 0.0, -20.0) * glm::vec3(u, 0.0, v);
-		pos.y = sinf(pos.z);
+		u *= 6.4f;
+		v *= 6.5f;
+
+		glm::vec3 pos = glm::vec3(u, 0.0, v);
+		//pos.y = (sinf(u)*sinf(v));
+		pos.y = ((sinf(((u - 3.2f) * (u - 3.2f)) + 1.0f) + 1.0f) * (sinf(v - 1.6f) + 1.0f));
+
+		float minValue = -0.05f;
+		float maxValue = 0.05f;
+
+		float randomValue = getRandomFloat(minValue, maxValue);
+		pos.y += randomValue;
 
 		return pos;
 	}
@@ -46,7 +65,8 @@ struct Mountains
 	glm::vec2 GetTex(float u, float v) const noexcept
 	{
 		glm::vec3 pos = GetPos(u, v);
-		return glm::vec2(pos.y, 0.1);
+		float normalizedY = (pos.y - (-0.5f)) / (4.5f - (-0.5f));
+		return glm::vec2(normalizedY, 0.5f);
 	}
 };
 
@@ -88,16 +108,8 @@ void WorldOfWarships::initGeometry()
 	waterGeom = CreateGLObjectFromMesh(waterMesh, { { 0, offsetof(glm::vec2,x), 2, GL_FLOAT} });
 
 	//Mountains
-	MeshObject<glm::vec2> mountainsMesh;
-	{
-		MeshObject<Vertex> surfaceMeshCPU = GetParamSurfMesh(Mountains(), mountainsResX, mountainsResY);
-		for (const Vertex& v : surfaceMeshCPU.vertexArray)
-		{
-			mountainsMesh.vertexArray.emplace_back(glm::vec2(v.position.x, v.position.y));
-		}
-		mountainsMesh.indexArray = surfaceMeshCPU.indexArray;
-	}
-	mountainsGeom = CreateGLObjectFromMesh(mountainsMesh, { { 0, offsetof(glm::vec2,x), 2, GL_FLOAT} });
+	MeshObject<Vertex> mountainsMesh = GetParamSurfMesh(Mountains(), mountainsResX, mountainsResY);
+	mountainsGeom = CreateGLObjectFromMesh(mountainsMesh, vertexAttribList);
 }
 
 void WorldOfWarships::cleanGeometry()
@@ -106,6 +118,7 @@ void WorldOfWarships::cleanGeometry()
 	CleanOGLObject(shipCanonGeom);
 	CleanOGLObject(shipTuretGeom);
 	CleanOGLObject(lightHouseGeom);
+	CleanOGLObject(mountainsGeom);
 	cleanSkyboxGeometry();
 }
 
