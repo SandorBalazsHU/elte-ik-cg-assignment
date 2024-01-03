@@ -36,6 +36,14 @@ void Camera::SetView(glm::vec3 _eye, glm::vec3 _at, glm::vec3 _worldUp)
 	m_viewDirty = true;
 }
 
+void Camera::SetPos(glm::vec3 pos) {
+	//glm::vec3 shift = glm::normalize(m_eye - pos);
+	glm::vec3 shift = glm::normalize(pos - m_eye);
+	m_goForward = shift.x;
+	m_goRight = shift.z;
+	m_goUp = shift.y;
+}
+
 void Camera::SetProj(float _angle, float _aspect, float _zn, float _zf)
 {
 	m_angle  = _angle;
@@ -219,5 +227,5 @@ void Camera::MouseMove(const SDL_MouseMotionEvent& mouse)
 
 void Camera::MouseWheel(const SDL_MouseWheelEvent& wheel)
 {
-	UpdateDistance( static_cast<float>(wheel.y) * m_speed / -100.0f );
+	UpdateDistance( static_cast<float>(wheel.y) * m_speed / -10.0f );
 }

@@ -72,6 +72,8 @@ private:
 	float shipAcceleration = 1.5f;
 	float shipSlowing = 0.9f;
 	glm::vec3 startingVelocity = glm::vec3(0.01f, 0.0f, 0.0f);
+	float leftVelocity = 1.0f;
+	float rightVelocity = -1.0f;
 
 	//water
 	float waterWidth = 1000.0f;
@@ -112,6 +114,7 @@ private:
 
 	//cam
 	Camera camera;
+	bool camIsSticked = true;
 
 	void initScene();
 	void rotateTuret(float rotation, Ship &currentShip);

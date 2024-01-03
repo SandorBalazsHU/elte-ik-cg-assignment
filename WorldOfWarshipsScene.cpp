@@ -11,9 +11,9 @@ void WorldOfWarships::sceneRender() {
 	for (size_t i = 0; i < numberOfallyShips; i++)
 	{
 		Ship currentShip = allyShips[i];
-		//glm::mat4 shipRotation = rotateShip(currentShip);
+		glm::mat4 shipRotation = rotateShip(currentShip);
 
-		glm::mat4 shipRotation = glm::rotate(glm::radians(270.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		//glm::mat4 shipRotation = glm::rotate(glm::radians(270.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		drawSceneObject(currentShip.position, shipRotation, shipGeom, shipTexture);
 
 		glm::mat4 turetRotation = shipRotation * glm::rotate(glm::radians(currentShip.turetAngle), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -90,7 +90,7 @@ glm::mat4 WorldOfWarships::rotateShip(Ship &currentShip)
 	suzanneRot[1] = glm::vec4(suzanneUp, 0.0f);
 	suzanneRot[2] = glm::vec4(suzanneRight, 0.0f);
 
-	static const glm::mat4 suzanneTowardX = glm::rotate(glm::radians(90.0f), glm::vec3(0.0, 1.0, 0.0));
+	static const glm::mat4 suzanneTowardX = glm::rotate(glm::radians(270.0f), glm::vec3(0.0, 1.0, 0.0));
 
 	return suzanneRot * suzanneTowardX;
 }

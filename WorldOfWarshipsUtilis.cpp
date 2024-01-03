@@ -50,11 +50,44 @@ void WorldOfWarships::keyboardDown(const SDL_KeyboardEvent& key)
 		{
 			shipSlow(allyShips[playerShipID]);
 		}
-		/*if (key.keysym.sym == SDLK_UP)
+		if (key.keysym.sym == SDLK_LEFT)
 		{
-			allyShips[playerShipID].velocity.x += 5.0f;
+			shipRotateLeft(allyShips[playerShipID]);
 		}
-		if (key.keysym.sym == SDLK_UP)
+		if (key.keysym.sym == SDLK_RIGHT)
+		{
+			shipRotateRight(allyShips[playerShipID]);
+		}
+
+		if (key.keysym.sym == SDLK_c)
+		{
+			rotateTuret(5.0f,allyShips[playerShipID]);
+		}
+		if (key.keysym.sym == SDLK_v)
+		{
+			rotateTuret(-5.0f,allyShips[playerShipID]);
+		}
+		if (key.keysym.sym == SDLK_r)
+		{
+			rotateCanon(5.0f,allyShips[playerShipID]);
+		}
+		if (key.keysym.sym == SDLK_f)
+		{
+			rotateCanon(-5.0f,allyShips[playerShipID]);
+		}
+
+		if (key.keysym.sym == SDLK_SPACE)
+		{
+			if (camIsSticked)
+			{
+				camIsSticked = false;
+			}
+			else
+			{
+				camIsSticked = true;
+			}
+		}
+		/*if (key.keysym.sym == SDLK_UP)
 		{
 			allyShips[playerShipID].velocity.x += 5.0f;
 		}*/

@@ -10,7 +10,7 @@
 void WorldOfWarships::initScene() {
 	float const fleatDistance = 50.0f;
 	float const shipDistance = 50.0f;
-	float const shipShiftDistance = 10.0f;
+	float const shipShiftDistance = 5.0f;
 
 	for (size_t i = 0; i < numberOfallyShips; i++)
 	{
@@ -28,9 +28,11 @@ void WorldOfWarships::initScene() {
 		newShip.team = 2;
 		newShip.position.x -= fleatDistance;
 		newShip.position.z -= ((numberOfallyShips * shipDistance) / 2.0f) - (i * shipDistance);
+		newShip.position.z -= shipShiftDistance;
 		newShip.velocity = startingVelocity;
 		enemyShips.push_back(newShip);
 	}
+	//allyShips[playerShipID].velocity = startingVelocity;
 };
 
 void  WorldOfWarships::rotateTuret(float rotation, Ship &currentShip) {
@@ -55,11 +57,15 @@ void WorldOfWarships::shipSlow(Ship &currentShip) {
 };
 
 void WorldOfWarships::shipRotateLeft(Ship &currentShip) {
-
+	glm::mat4 shipRotation = glm::rotate(glm::radians(leftVelocity), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::vec3 rotatedVector = glm::vec3(shipRotation * glm::vec4(currentShip.velocity, 1.0f));
+	currentShip.velocity = rotatedVector;
 };
 
 void WorldOfWarships::shipRotateRight(Ship &currentShip) {
-
+	glm::mat4 shipRotation = glm::rotate(glm::radians(rightVelocity), glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::vec3 rotatedVector = glm::vec3(shipRotation * glm::vec4(currentShip.velocity, 1.0f));
+	currentShip.velocity = rotatedVector;
 };
 
 void WorldOfWarships::updateScene() {

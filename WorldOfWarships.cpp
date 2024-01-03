@@ -43,6 +43,11 @@ void WorldOfWarships::update(const SUpdateInfo& updateInfo)
 	elapsedTimeInSec = updateInfo.ElapsedTimeInSec;
 	camera.Update(updateInfo.DeltaTimeInSec);
 	updateScene();
+	if (camIsSticked) {
+		/*glm::vec3 position = allyShips[playerShipID].position;
+		position.y = 5.0f;
+		camera.SetPos(position);*/
+	}
 };
 
 void WorldOfWarships::render()

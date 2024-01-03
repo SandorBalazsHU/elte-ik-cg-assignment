@@ -22,6 +22,7 @@ public:
 	void Update(float _deltaTime);
 
 	void SetView(glm::vec3 _eye, glm::vec3 _at, glm::vec3 _up);
+	void SetPos(glm::vec3 _eye);
 	void LookAt(glm::vec3 _at);
 
 	inline float GetAngle() const { return m_angle; }
