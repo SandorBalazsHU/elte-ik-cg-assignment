@@ -7,7 +7,7 @@
 
 #include "WorldOfWarships.h"
 
-struct Param
+struct Blank
 {
 	glm::vec3 GetPos(float u, float v) const noexcept
 	{
@@ -17,37 +17,6 @@ struct Param
 	glm::vec3 GetNorm(float u, float v) const noexcept
 	{
 		return glm::vec3(0.0, 0.0, 1.0);
-	}
-
-	glm::vec2 GetTex(float u, float v) const noexcept
-	{
-		return glm::vec2(u, v);
-	}
-};
-
-struct Water
-{
-	float waterWidth;
-	float waterHight;
-
-	Water(float _waterWidth, float _waterHight) {
-		float waterWidth = _waterWidth;
-		float waterHight = _waterHight;
-	}
-
-	glm::vec3 GetPos(float u, float v) const noexcept
-	{
-		glm::vec3 pos = glm::vec3(-10.0, 0.0, 10.0) + glm::vec3(waterWidth, 0.0, -waterHight) * glm::vec3(u, 0.0, v);
-		pos.y = sinf((pos.z) / 8.0) + sin((pos.y + pos.x) / 6.0);
-		return pos;
-	}
-
-	glm::vec3 GetNorm(float u, float v) const noexcept
-	{
-		glm::vec3 du = GetPos(u + 0.01f, v) - GetPos(u - 0.01f, v);
-		glm::vec3 dv = GetPos(u, v + 0.01f) - GetPos(u, v - 0.01f);
-
-		return glm::normalize(glm::cross(du, dv));
 	}
 
 	glm::vec2 GetTex(float u, float v) const noexcept
@@ -75,7 +44,7 @@ void WorldOfWarships::InitGeometry()
 	// Water
 	MeshObject<glm::vec2> waterCPU;
 	{
-		MeshObject<Vertex> surfaceMeshCPU = GetParamSurfMesh(Param(), waterResX, waterResY);
+		MeshObject<Vertex> surfaceMeshCPU = GetParamSurfMesh(Blank(), waterResX, waterResY);
 		for (const Vertex& v : surfaceMeshCPU.vertexArray)
 		{
 			waterCPU.vertexArray.emplace_back(glm::vec2(v.position.x, v.position.y));
