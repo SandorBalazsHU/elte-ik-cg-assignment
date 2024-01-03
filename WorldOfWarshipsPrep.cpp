@@ -30,15 +30,21 @@ void WorldOfWarships::initTextures()
 	TextureFromFile(shipTexture, "Assets/ship.png");
 	SetupTextureSampling(GL_TEXTURE_2D, shipTexture);
 
+	glGenTextures(1, &shipTuretTexture);
+	TextureFromFile(shipTuretTexture, "Assets/ship_turet.png");
+	SetupTextureSampling(GL_TEXTURE_2D, shipTuretTexture);
+
+	glGenTextures(1, &shipCanonTexture);
+	TextureFromFile(shipCanonTexture, "Assets/ship_canon.png");
+	SetupTextureSampling(GL_TEXTURE_2D, shipCanonTexture);
+
 	glGenTextures(1, &waterTexture);
 	TextureFromFile(waterTexture, "Assets/water_texture.jpg");
 	SetupTextureSampling(GL_TEXTURE_2D, waterTexture);
 
 	glGenTextures(1, &waterNormalMapTexture);
-	TextureFromFile(waterNormalMapTexture, "Assets/normal.jpg");
+	TextureFromFile(waterNormalMapTexture, "Assets/water_normal.jpg");
 	SetupTextureSampling(GL_TEXTURE_2D, waterNormalMapTexture);
-
-	// skybox texture
 
 	glGenTextures(1, &skyboxTexture);
 	TextureFromFile(skyboxTexture, "Assets/xpos.png", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_POSITIVE_X);
@@ -48,15 +54,13 @@ void WorldOfWarships::initTextures()
 	TextureFromFile(skyboxTexture, "Assets/zpos.png", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_POSITIVE_Z);
 	TextureFromFile(skyboxTexture, "Assets/zneg.png", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z);
 	SetupTextureSampling(GL_TEXTURE_CUBE_MAP, skyboxTexture, false);
-
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-	//glGenerateMipmap(GL_TEXTURE_2D); // Mipmap generálása
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // bilineáris szürés nagyításkor (ez az alapértelmezett)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	// mi legyen az eredmény, ha a textúrán kívülröl próbálunk mintát venni?
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // vízszintesen
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // függölegesen
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT); // vízszintesen
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT); // függölegesen
 
 	glGenerateMipmap(GL_TEXTURE_2D); // Mipmap generálása
 }
@@ -64,6 +68,8 @@ void WorldOfWarships::initTextures()
 void WorldOfWarships::cleanTextures()
 {
 	glDeleteTextures(1, &shipTexture);
+	glDeleteTextures(1, &shipTuretTexture);
+	glDeleteTextures(1, &shipCanonTexture);
 	glDeleteTextures(1, &waterTexture);
 	glDeleteTextures(1, &waterNormalMapTexture);
 	glDeleteTextures(1, &skyboxTexture);
