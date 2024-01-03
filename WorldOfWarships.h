@@ -113,6 +113,8 @@ private:
 	void skyBoxRender();
 	void mountainsRender();
 	void drawMountain(glm::mat4 matWorld);
+	void lighthouseRender();
+	void drawLighthouse(glm::mat4 matWorld);
 	void renderClean();
 
 	void initTextures();

@@ -6,31 +6,23 @@
  */
 
 #include "WorldOfWarships.h"
-void WorldOfWarships::mountainsRender()
+
+void WorldOfWarships::lighthouseRender()
 {
-	glm::mat4 matWorld01 = glm::translate(glm::vec3(0.0f, -1.0f, 500.0f - 20.0f)) * glm::scale(glm::vec3(130.0f, 20.0f, 20.0f)) * glm::translate(glm::vec3(-3.2f, 0.0f, -2.9f));
-	drawMountain(matWorld01);
-	glm::mat4 matWorld02 = glm::translate(glm::vec3(0.0f, -1.0f, -500.0f + 20.0f)) * glm::scale(glm::vec3(130.0f, 20.0f, 20.0f)) * glm::translate(glm::vec3(-3.2f, 0.0f, -2.9f));
-	drawMountain(matWorld02);
-	glm::mat4 matWorld03 = glm::translate(glm::vec3(500.0f - 20.0f, -1.0f, 0.0f))
-		* (glm::rotate(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * 
-			(glm::scale(glm::vec3(130.0f, 20.0f, 20.0f)) * glm::translate(glm::vec3(-3.2f, 0.0f, -2.9f))));
-	drawMountain(matWorld03);
-	glm::mat4 matWorld04 = glm::translate(glm::vec3(-500.0f + 20.0f, -1.0f, 0.0f))
-		* (glm::rotate(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * 
-			(glm::scale(glm::vec3(130.0f, 20.0f, 20.0f)) * glm::translate(glm::vec3(-3.2f, 0.0f, -2.9f))));
-	drawMountain(matWorld04);
+	glm::mat4 matWorld01 = glm::translate(glm::vec3(500.0f - 20.0f, -1.0f, 500.0f - 20.0f)) * glm::scale(glm::vec3(10.0f, 10.0f, 10.0f));
+	drawLighthouse(matWorld01);
+	glm::mat4 matWorld02 = glm::translate(glm::vec3(-500.0f + 20.0f, -1.0f, -500.0f + 20.0f)) * glm::scale(glm::vec3(10.0f, 10.0f, 10.0f)) * glm::translate(glm::vec3(-3.2f, 0.0f, -2.9f));
+	drawLighthouse(matWorld02);
 };
 
-void WorldOfWarships::drawMountain(glm::mat4 matWorld)
+void WorldOfWarships::drawLighthouse(glm::mat4 matWorld)
 {
-
 	//geom
-	glBindVertexArray(mountainsGeom.vaoID);
+	glBindVertexArray(lightHouseGeom.vaoID);
 
 	//text
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, mountainsTexture);
+	glBindTexture(GL_TEXTURE_2D, lightHouseTexture);
 
 	//shader
 	glUseProgram(shaderBase);
@@ -68,7 +60,7 @@ void WorldOfWarships::drawMountain(glm::mat4 matWorld)
 
 	//draw
 	glDrawElements(GL_TRIANGLES,
-		mountainsGeom.count,
+		lightHouseGeom.count,
 		GL_UNSIGNED_INT,
 		nullptr);
 };
