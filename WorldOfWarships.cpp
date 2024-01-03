@@ -10,248 +10,6 @@
 WorldOfWarships::WorldOfWarships() {};
 WorldOfWarships::~WorldOfWarships() {};
 
-void WorldOfWarships::InitShaders()
-{
-	m_programID = glCreateProgram();
-	AssembleProgram( m_programID, "Vert_PosNormTex.vert", "Frag_LightingNoFaceCull.frag" );
-	m_programWaterID = glCreateProgram();
-	AssembleProgram( m_programWaterID, "Vert_Water.vert", "Frag_Lighting_w_Spot_XZPlaneNormalMap.frag" );
-	m_programAxesID = glCreateProgram();
-	AssembleProgram( m_programAxesID, "Vert_axes.vert", "Frag_PosCol.frag" );
-	m_programTrajectoryID = glCreateProgram();
-	AssembleProgram( m_programTrajectoryID, "Vert_traj.vert", "Frag_PosCol.frag" );
-	
-	InitSkyboxShaders();
-}
-
-void WorldOfWarships::InitSkyboxShaders()
-{
-	m_programSkyboxID = glCreateProgram();
-	AssembleProgram( m_programSkyboxID, "Vert_skybox.vert", "Frag_skybox.frag" );
-}
-
-void WorldOfWarships::CleanShaders()
-{
-	glDeleteProgram( m_programID );
-	glDeleteProgram( m_programWaterID );
-	glDeleteProgram( m_programAxesID );
-	glDeleteProgram( m_programTrajectoryID );
-
-	CleanSkyboxShaders();
-}
-
-void WorldOfWarships::CleanSkyboxShaders()
-{
-	glDeleteProgram( m_programSkyboxID );
-}
-
-struct Param
-{
-	glm::vec3 GetPos(float u, float v) const noexcept
-	{
-        return glm::vec3(u, v, 0.0);
-    }
-
-	glm::vec3 GetNorm(float u, float v) const noexcept
-	{
-        return glm::vec3(0.0, 0.0, 1.0);
-    }
-
-	glm::vec2 GetTex( float u, float v ) const noexcept
-	{
-        return glm::vec2(u, v);
-    }
-};
-
-struct Water
-{
-	glm::vec3 GetPos(float u, float v) const noexcept
-	{
-		glm::vec3 pos = glm::vec3(-10.0, 0.0, 10.0) + glm::vec3( 20.0, 0.0, -20.0) * glm::vec3(u, 0.0, v);
-		pos.y = sinf(pos.z);
-
-		return pos;
-	}
-
-	glm::vec3 GetNorm(float u, float v) const noexcept
-	{
-		glm::vec3 du = GetPos(u + 0.01f, v) - GetPos(u - 0.01f, v);
-		glm::vec3 dv = GetPos(u, v + 0.01f) - GetPos(u, v - 0.01f);
-
-		return glm::normalize(glm::cross(du, dv));
-	}
-
-	glm::vec2 GetTex( float u, float v ) const noexcept
-	{
-        return glm::vec2(u, v);
-    }
-};
-
-void WorldOfWarships::InitGeometry()
-{
-
-	const std::initializer_list<VertexAttributeDescriptor> vertexAttribList =
-	{
-		{ 0, offsetof( Vertex, position ), 3, GL_FLOAT },
-		{ 1, offsetof( Vertex, normal   ), 3, GL_FLOAT },
-		{ 2, offsetof( Vertex, texcoord ), 2, GL_FLOAT },
-	};
-
-	// Suzanne
-
-	MeshObject<Vertex> suzanneMeshCPU = ObjParser::parse("Assets/ship.obj");
-
-	m_SuzanneGPU = CreateGLObjectFromMesh( suzanneMeshCPU, vertexAttribList );
-
-	// quad
-	MeshObject<Vertex> quadMeshCPU;
-    quadMeshCPU.vertexArray =
-	{
-        { glm::vec3(-1.0, -1.0, 0.0), glm::vec3(0.0, 0.0,  1.0), glm::vec2(0.0,0.0) }, // első lap
-        { glm::vec3( 1.0, -1.0, 0.0), glm::vec3(0.0, 0.0,  1.0), glm::vec2(1.0,0.0) },
-        { glm::vec3( 1.0,  1.0, 0.0), glm::vec3(0.0, 0.0,  1.0), glm::vec2(1.0,1.0) },
-        { glm::vec3(-1.0,  1.0, 0.0), glm::vec3(0.0, 0.0,  1.0), glm::vec2(0.0,1.0) }
-    };
-
-    quadMeshCPU.indexArray =
-	{
-        0, 1, 2, // első lap
-        2, 3, 0
-    };
-    
-	m_quadGPU = CreateGLObjectFromMesh( quadMeshCPU, vertexAttribList );
-
-	// Skybox
-	InitSkyboxGeometry();
-
-	// Water
-	MeshObject<glm::vec2> waterCPU;
-	{
-		MeshObject<Vertex> surfaceMeshCPU = GetParamSurfMesh( Param(), 1000, 1000 );
-		for ( const Vertex& v : surfaceMeshCPU.vertexArray )
-		{
-			waterCPU.vertexArray.emplace_back( glm::vec2( v.position.x, v.position.y ) );
-		}
-		waterCPU.indexArray = surfaceMeshCPU.indexArray;
-	}
-	m_waterGPU = CreateGLObjectFromMesh( waterCPU, { { 0, offsetof( glm::vec2,x), 2, GL_FLOAT}});
-}
-
-void WorldOfWarships::CleanGeometry()
-{
-	CleanOGLObject( m_SuzanneGPU );
-	CleanSkyboxGeometry();
-}
-
-void WorldOfWarships::InitSkyboxGeometry()
-{
-	// skybox geo
-	MeshObject<glm::vec3> skyboxCPU =
-	{
-		std::vector<glm::vec3>
-		{
-			// hátsó lap
-			glm::vec3(-1, -1, -1),
-			glm::vec3( 1, -1, -1),
-			glm::vec3( 1,  1, -1),
-			glm::vec3(-1,  1, -1),
-			// elülső lap
-			glm::vec3(-1, -1, 1),
-			glm::vec3( 1, -1, 1),
-			glm::vec3( 1,  1, 1),
-			glm::vec3(-1,  1, 1),
-		},
-
-		std::vector<GLuint>
-		{
-			// hátsó lap
-			0, 1, 2,
-			2, 3, 0,
-			// elülső lap
-			4, 6, 5,
-			6, 4, 7,
-			// bal
-			0, 3, 4,
-			4, 3, 7,
-			// jobb
-			1, 5, 2,
-			5, 6, 2,
-			// alsó
-			1, 0, 4,
-			1, 4, 5,
-			// felső
-			3, 2, 6,
-			3, 6, 7,
-		}
-	};
-
-	m_SkyboxGPU = CreateGLObjectFromMesh( skyboxCPU, { { 0, offsetof( glm::vec3,x ), 3, GL_FLOAT } } );
-}
-
-void WorldOfWarships::CleanSkyboxGeometry()
-{
-	CleanOGLObject( m_SkyboxGPU );
-}
-
-void WorldOfWarships::InitTextures()
-{
-	// diffuse texture
-
-	glGenTextures( 1, &m_SuzanneTextureID );
-	TextureFromFile( m_SuzanneTextureID, "Assets/ship.png" );
-	SetupTextureSampling( GL_TEXTURE_2D, m_SuzanneTextureID );
-
-	glGenTextures( 1, &m_waterTextureID );
-	TextureFromFile( m_waterTextureID, "Assets/water_texture.jpg" );
-	SetupTextureSampling( GL_TEXTURE_2D, m_waterTextureID );
-
-	glGenTextures(1, &m_woodNormalMapTextureID);
-	//TextureFromFile(m_woodNormalMapTextureID, "Assets/normal.jpg");
-	TextureFromFile(m_woodNormalMapTextureID, "Assets/normal.jpg");
-	SetupTextureSampling(GL_TEXTURE_2D, m_woodNormalMapTextureID);
-
-	InitSkyboxTextures();
-}
-
-void WorldOfWarships::CleanTextures()
-{
-	glDeleteTextures( 1, &m_SuzanneTextureID );
-	glDeleteTextures( 1, &m_waterTextureID );
-	glDeleteTextures( 1, &m_woodNormalMapTextureID);
-	CleanSkyboxTextures();
-}
-
-void WorldOfWarships::InitSkyboxTextures()
-{
-	// skybox texture
-
-	glGenTextures( 1, &m_skyboxTextureID );
-	TextureFromFile(m_skyboxTextureID, "Assets/xpos.png", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_POSITIVE_X);
-	TextureFromFile( m_skyboxTextureID, "Assets/xneg.png", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_NEGATIVE_X );
-	TextureFromFile( m_skyboxTextureID, "Assets/ypos.png", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_POSITIVE_Y );
-	TextureFromFile( m_skyboxTextureID, "Assets/yneg.png", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_NEGATIVE_Y );
-	TextureFromFile( m_skyboxTextureID, "Assets/zpos.png", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_POSITIVE_Z );
-	TextureFromFile( m_skyboxTextureID, "Assets/zneg.png", GL_TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP_NEGATIVE_Z );
-	SetupTextureSampling( GL_TEXTURE_CUBE_MAP, m_skyboxTextureID, false );
-
-	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-	//glGenerateMipmap(GL_TEXTURE_2D); // Mipmap generálása
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); // bilineáris szürés nagyításkor (ez az alapértelmezett)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	// mi legyen az eredmény, ha a textúrán kívülröl próbálunk mintát venni?
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // vízszintesen
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT); // függölegesen
-
-	glGenerateMipmap(GL_TEXTURE_2D); // Mipmap generálása
-
-}
-
-void WorldOfWarships::CleanSkyboxTextures()
-{
-	glDeleteTextures( 1, &m_skyboxTextureID);
-}
-
 bool WorldOfWarships::Init()
 {
 	setupDebugCallback();
@@ -275,9 +33,9 @@ bool WorldOfWarships::Init()
 		glLineWidth( std::min( 4.0f, lineWidthRange[ 1 ] ) ); // vastagabb vonalak
 	}*/
 
-	InitShaders();
+	initShaders();
 	InitGeometry();
-	InitTextures();
+	initTextures();
 
 	//
 	// egyéb inicializálás
@@ -299,9 +57,9 @@ bool WorldOfWarships::Init()
 
 void WorldOfWarships::Clean()
 {
-	CleanShaders();
+	cleanShaders();
 	CleanGeometry();
-	CleanTextures();
+	cleanTextures();
 }
 
 void WorldOfWarships::Update( const SUpdateInfo& updateInfo )
@@ -324,10 +82,10 @@ void WorldOfWarships::Render()
 
 	// - Textúrák beállítása, minden egységre külön
 	glActiveTexture( GL_TEXTURE0 );
-	glBindTexture( GL_TEXTURE_2D, m_SuzanneTextureID );
+	glBindTexture( GL_TEXTURE_2D, shipTexture );
 
 
-	glUseProgram( m_programID );
+	glUseProgram( shaderBase );
 
 	glm::vec3 pos = glm::vec3(0.0);
 	pos.y = sin((pos.z + m_ElapsedTimeInSec) / 8.0) + sin((pos.y + pos.x + m_ElapsedTimeInSec) / 6.0);
@@ -374,13 +132,13 @@ void WorldOfWarships::Render()
 
 	// - Textúrák beállítása, minden egységre külön
 	glActiveTexture( GL_TEXTURE0 );
-	glBindTexture( GL_TEXTURE_2D, m_waterTextureID );
+	glBindTexture( GL_TEXTURE_2D, waterTexture );
 
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_woodNormalMapTextureID);
+	glBindTexture(GL_TEXTURE_2D, waterNormalMapTexture);
 
 
-	glUseProgram( m_programWaterID );
+	glUseProgram( shaderWater );
 
 	matWorld = glm::translate(glm::vec3(0.0,0.1,0.0)); // toljuk lejjebb a vizet
 	//matWorld = glm::translate(glm::vec3(0.0,-2.0,0.0)); // toljuk lejjebb a vizet
@@ -432,10 +190,10 @@ void WorldOfWarships::Render()
 
 	// - Textura
 	glActiveTexture( GL_TEXTURE0 );
-	glBindTexture( GL_TEXTURE_CUBE_MAP, m_skyboxTextureID );
+	glBindTexture( GL_TEXTURE_CUBE_MAP, skyboxTexture );
 
 	// - Program
-	glUseProgram( m_programSkyboxID );
+	glUseProgram( shaderSkyBox );
 
 	// - uniform parameterek
 	glUniformMatrix4fv( ul("world"),    1, GL_FALSE, glm::value_ptr( glm::translate( m_camera.GetEye() ) ) );
@@ -511,16 +269,4 @@ void WorldOfWarships::RenderGUI()
 		}
 	}
 	ImGui::End();
-}
-
-GLint WorldOfWarships::ul( const char* uniformName ) noexcept
-{
-	GLuint programID = 0;
-
-	// Kérdezzük le az aktuális programot!
-	// https://registry.khronos.org/OpenGL-Refpages/gl4/html/glGet.xhtml
-	glGetIntegerv( GL_CURRENT_PROGRAM, reinterpret_cast<GLint*>( &programID ) );
-	// A program és a uniform név ismeretében kérdezzük le a location-t!
-	// https://registry.khronos.org/OpenGL-Refpages/gl4/html/glGetUniformLocation.xhtml
-	return glGetUniformLocation( programID, uniformName );
 }

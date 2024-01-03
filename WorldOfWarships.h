@@ -52,22 +52,14 @@ protected:
 
 	float m_ElapsedTimeInSec = 0.0f;
 
-	// Kamera
 	Camera m_camera;
 
-	//
-	// OpenGL-es dolgok
-	//
-	
-	// uniform location lekérdezése
 	GLint ul( const char* uniformName ) noexcept;
 
 	// shaderekhez szükséges változók
-	GLuint m_programID = 0;		  // shaderek programja
-	GLuint m_programSkyboxID = 0; // skybox programja
-	GLuint m_programWaterID = 0;   // viz programja
-	GLuint m_programAxesID = 0;   // koordinata tengelyek programja
-	GLuint m_programTrajectoryID = 0;   // utvonal programja
+	GLuint shaderBase = 0;		  // shaderek programja
+	GLuint shaderSkyBox = 0; // skybox programja
+	GLuint shaderWater = 0;   // viz programja
 
 	// Fényforrás- ...
 	glm::vec4 m_lightPos = glm::vec4( 0.0f, 1.0f, 0.0f, 0.0f );
@@ -87,13 +79,10 @@ protected:
 	float m_Shininess = 1.0;
 
 	// Shaderek inicializálása, és törtlése
-	void InitShaders();
-	void CleanShaders();
-	void InitSkyboxShaders();
-	void CleanSkyboxShaders();
+	void initShaders();
+	void cleanShaders();
 
 	// Geometriával kapcsolatos változók
-
 	OGLObject m_SuzanneGPU = {};
 	OGLObject m_SkyboxGPU = {};
 	OGLObject m_waterGPU = {};
@@ -107,15 +96,12 @@ protected:
 
 	// Textúrázás, és változói
 
-	GLuint m_SuzanneTextureID = 0;
-	GLuint m_skyboxTextureID = 0;
-	GLuint m_waterTextureID = 0;
-	GLuint m_woodNormalMapTextureID = 0;
-	GLuint m_glassTextureID = 0;
+	GLuint shipTexture = 0;
+	GLuint skyboxTexture = 0;
+	GLuint waterTexture = 0;
+	GLuint waterNormalMapTexture = 0;
 
-	void InitTextures();
-	void CleanTextures();
-	void InitSkyboxTextures();
-	void CleanSkyboxTextures();
+	void initTextures();
+	void cleanTextures();
 	void setupDebugCallback();
 };

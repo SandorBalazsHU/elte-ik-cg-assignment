@@ -91,6 +91,8 @@
     <ClCompile Include="includes\GLUtils.cpp" />
     <ClCompile Include="includes\Camera.cpp" />
     <ClCompile Include="includes\ObjParser.cpp" />
+    <ClCompile Include="WorldOfWarshipsGeom.cpp" />
+    <ClCompile Include="WorldOfWarshipsPrep.cpp" />
     <ClCompile Include="WorldOfWarshipsUtilis.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -103,16 +105,13 @@
     <ClInclude Include="includes\ParametricSurfaceMesh.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Frag_Lighting_w_Spot_XZPlaneNormalMap.frag" />
-    <None Include="Vert_PosNormTex.vert" />
-    <None Include="Vert_skybox.vert" />
-    <None Include="Frag_skybox.frag" />
-    <None Include="Frag_Lighting.frag" />
-    <None Include="Frag_LightingNoFaceCull.frag" />
+    <None Include="Frag_Water.frag" />
+    <None Include="Vert_Base.vert" />
+    <None Include="Vert_SkyBox.vert" />
+    <None Include="Frag_SkyBox.frag" />
+    <None Include="Frag_Base.frag" />
+    <None Include="_Frag_BaseNoFaceCull.frag" />
     <None Include="Vert_water.vert" />
-    <None Include="Frag_PosCol.frag" />
-    <None Include="Vert_axes.vert" />
-    <None Include="Vert_traj.vert" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Assets\Suzanne.obj" />

@@ -51,6 +51,12 @@
     <ClCompile Include="WorldOfWarshipsUtilis.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="WorldOfWarshipsPrep.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldOfWarshipsGeom.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WorldOfWarships.h">
@@ -76,34 +82,25 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Vert_PosNormTex.vert">
+    <None Include="Vert_Base.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Vert_skybox.vert">
+    <None Include="Vert_SkyBox.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Frag_skybox.frag">
+    <None Include="Frag_SkyBox.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Frag_Lighting.frag">
+    <None Include="Frag_Base.frag">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Frag_LightingNoFaceCull.frag">
+    <None Include="_Frag_BaseNoFaceCull.frag">
       <Filter>Shaders</Filter>
     </None>
     <None Include="Vert_water.vert">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Frag_PosCol.frag">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Vert_axes.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Vert_traj.vert">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="Frag_Lighting_w_Spot_XZPlaneNormalMap.frag">
+    <None Include="Frag_Water.frag">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

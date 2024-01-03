@@ -7,6 +7,13 @@
 
 #include "WorldOfWarships.h"
 
+GLint WorldOfWarships::ul(const char* uniformName) noexcept
+{
+	GLuint programID = 0;
+	glGetIntegerv(GL_CURRENT_PROGRAM, reinterpret_cast<GLint*>(&programID));
+	return glGetUniformLocation(programID, uniformName);
+}
+
 void WorldOfWarships::setupDebugCallback()
 {
 	GLint context_flags;
@@ -25,8 +32,8 @@ void WorldOfWarships::keyboardDown(const SDL_KeyboardEvent& key)
 	{
 		if (key.keysym.sym == SDLK_F5 && key.keysym.mod & KMOD_CTRL)
 		{
-			CleanShaders();
-			InitShaders();
+			cleanShaders();
+			initShaders();
 		}
 		if (key.keysym.sym == SDLK_F1)
 		{
