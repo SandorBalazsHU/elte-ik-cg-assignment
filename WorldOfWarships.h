@@ -49,8 +49,12 @@ public:
 	void mouseWheel(const SDL_MouseWheelEvent&);
 	void resize(int, int);
 protected:
+	float waterWidth = 2000.0f;
+	float waterHight = 2000.0f;
+	int waterResX = 1000;
+	int waterResY = 1000;
 
-	float m_ElapsedTimeInSec = 0.0f;
+	float elapsedTimeInSec = 0.0f;
 
 	Camera m_camera;
 

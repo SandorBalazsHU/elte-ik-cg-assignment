@@ -64,7 +64,7 @@ void WorldOfWarships::Clean()
 
 void WorldOfWarships::Update( const SUpdateInfo& updateInfo )
 {
-	m_ElapsedTimeInSec = updateInfo.ElapsedTimeInSec;
+	elapsedTimeInSec = updateInfo.ElapsedTimeInSec;
 
 	m_camera.Update( updateInfo.DeltaTimeInSec );
 }
@@ -88,7 +88,7 @@ void WorldOfWarships::Render()
 	glUseProgram( shaderBase );
 
 	glm::vec3 pos = glm::vec3(0.0);
-	pos.y = sin((pos.z + m_ElapsedTimeInSec) / 8.0) + sin((pos.y + pos.x + m_ElapsedTimeInSec) / 6.0);
+	pos.y = sin((pos.z + elapsedTimeInSec) / 8.0) + sin((pos.y + pos.x + elapsedTimeInSec) / 6.0);
 	glm::mat4 matWorld = glm::translate(pos);
 
 	glUniformMatrix4fv( ul( "world" ),    1, GL_FALSE, glm::value_ptr( matWorld ) );
@@ -169,7 +169,9 @@ void WorldOfWarships::Render()
 
 	glUniform1f( ul( "Shininess" ),	m_Shininess );
 
-	glUniform1f( ul( "ElapsedTimeInSec" ),	m_ElapsedTimeInSec );
+	glUniform1f( ul( "elapsedTimeInSec" ), elapsedTimeInSec);
+	glUniform1f( ul( "waterWidth" ), waterWidth);
+	glUniform1f( ul( "waterHight" ), waterHight);
 
 	glUniform1i(ul("texImage"), 0);
 	glUniform1i(ul("texNormalMap"), 1);
