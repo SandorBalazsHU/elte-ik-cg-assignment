@@ -16,7 +16,7 @@ bool WorldOfWarships::init()
 	glClearColor(0.125f, 0.25f, 0.5f, 1.0f);
 	GLfloat pointSizeRange[2] = { 0.0f, 0.0f };
 	glGetFloatv(GL_POINT_SIZE_RANGE, pointSizeRange);
-	glPointSize( std::min( 16.0f, pointSizeRange[ 1 ] ) );
+	glPointSize(std::min(16.0f, pointSizeRange[1]));
 
 	initShaders();
 	initGeometry();
@@ -26,181 +26,42 @@ bool WorldOfWarships::init()
 	glCullFace(GL_BACK);
 	glEnable(GL_DEPTH_TEST);
 
-	camera.SetView(glm::vec3(0.0, 25.0, 25.0), glm::vec3(0.0, 0.0, 0.0),glm::vec3(0.0, 1.0, 0.0));
+	camera.SetView(glm::vec3(0.0, 25.0, 25.0), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
 	return true;
-}
+};
 
 void WorldOfWarships::clean()
 {
 	cleanShaders();
 	cleanGeometry();
 	cleanTextures();
-}
+};
 
-void WorldOfWarships::update( const SUpdateInfo& updateInfo )
+void WorldOfWarships::update(const SUpdateInfo& updateInfo)
 {
 	elapsedTimeInSec = updateInfo.ElapsedTimeInSec;
-	camera.Update( updateInfo.DeltaTimeInSec );
-}
+	camera.Update(updateInfo.DeltaTimeInSec);
+};
 
 void WorldOfWarships::render()
 {
-	// töröljük a frampuffert (GL_COLOR_BUFFER_BIT)...
-	// ... és a mélységi Z puffert (GL_DEPTH_BUFFER_BIT)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	sceneRender();
+	waterRender();
+	skyBoxRender();
+	renderClean();
+}
 
-	// Suzanne
+void WorldOfWarships::renderClean() {
+	glUseProgram(0);
 
-	glBindVertexArray( shipGeom.vaoID );
-
-	// - Textúrák beállítása, minden egységre külön
-	glActiveTexture( GL_TEXTURE0 );
-	glBindTexture( GL_TEXTURE_2D, shipTexture );
-
-
-	glUseProgram( shaderBase );
-
-	glm::vec3 pos = glm::vec3(0.0);
-	pos.y = sin((pos.z + elapsedTimeInSec) / 8.0) + sin((pos.y + pos.x + elapsedTimeInSec) / 6.0);
-	glm::mat4 matWorld = glm::translate(pos);
-
-	glUniformMatrix4fv( ul( "world" ),    1, GL_FALSE, glm::value_ptr( matWorld ) );
-	glUniformMatrix4fv( ul( "worldIT" ),  1, GL_FALSE, glm::value_ptr( glm::transpose( glm::inverse( matWorld ) ) ) );
-
-	glUniformMatrix4fv( ul( "viewProj" ), 1, GL_FALSE, glm::value_ptr( camera.GetViewProj() ) );
-
-	// - Fényforrások beállítása
-	glUniform3fv( ul( "cameraPos" ), 1, glm::value_ptr( camera.GetEye() ) );
-	glUniform4fv( ul( "lightPos" ),  1, glm::value_ptr( m_lightPos ) );
-
-	glUniform3fv( ul( "La" ),		 1, glm::value_ptr( m_La ) );
-	glUniform3fv( ul( "Ld" ),		 1, glm::value_ptr( m_Ld ) );
-	glUniform3fv( ul( "Ls" ),		 1, glm::value_ptr( m_Ls ) );
-
-	glUniform1f( ul( "lightConstantAttenuation"	 ), m_lightConstantAttenuation );
-	glUniform1f( ul( "lightLinearAttenuation"	 ), m_lightLinearAttenuation   );
-	glUniform1f( ul( "lightQuadraticAttenuation" ), m_lightQuadraticAttenuation);
-
-	// - Anyagjellemzők beállítása
-	glUniform3fv( ul( "Ka" ),		 1, glm::value_ptr( m_Ka ) );
-	glUniform3fv( ul( "Kd" ),		 1, glm::value_ptr( m_Kd ) );
-	glUniform3fv( ul( "Ks" ),		 1, glm::value_ptr( m_Ks ) );
-
-	glUniform1f( ul( "Shininess" ),	m_Shininess );
-
-
-	// - textúraegységek beállítása
-	glUniform1i( ul( "texImage" ), 0 );
-
-	glDrawElements( GL_TRIANGLES,    
-					shipGeom.count,			 
-					GL_UNSIGNED_INT,
-					nullptr );
-
-	// Viz
-
-	glDisable(GL_CULL_FACE);
-
-	glBindVertexArray( waterGeom.vaoID );
-
-	// - Textúrák beállítása, minden egységre külön
-	glActiveTexture( GL_TEXTURE0 );
-	glBindTexture( GL_TEXTURE_2D, waterTexture );
-
+	glActiveTexture(GL_TEXTURE0);
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, waterNormalMapTexture);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
-
-	glUseProgram( shaderWater );
-
-	matWorld = glm::translate(glm::vec3(0.0,0.1,0.0)); // toljuk lejjebb a vizet
-	//matWorld = glm::translate(glm::vec3(0.0,-2.0,0.0)); // toljuk lejjebb a vizet
-	//matWorld = glm::identity<glm::mat4>(); // toljuk lejjebb a vizet
-
-	// Mivel másik shader-t használunk, ezért újra be kell állítani a uniform paramétereket
-	glUniformMatrix4fv( ul( "world" ),    1, GL_FALSE, glm::value_ptr( matWorld ) );
-	glUniformMatrix4fv( ul( "worldIT" ),  1, GL_FALSE, glm::value_ptr( glm::transpose( glm::inverse( matWorld ) ) ) );
-
-	glUniformMatrix4fv( ul( "viewProj" ), 1, GL_FALSE, glm::value_ptr( camera.GetViewProj() ) );
-
-	// - Fényforrások beállítása
-	glUniform3fv( ul( "cameraPos" ), 1, glm::value_ptr( camera.GetEye() ) );
-	glUniform4fv( ul( "lightPos" ),  1, glm::value_ptr( m_lightPos ) );
-
-	glUniform3fv( ul( "La" ),		 1, glm::value_ptr( m_La ) );
-	glUniform3fv( ul( "Ld" ),		 1, glm::value_ptr( m_Ld ) );
-	glUniform3fv( ul( "Ls" ),		 1, glm::value_ptr( m_Ls ) );
-
-	glUniform1f( ul( "lightConstantAttenuation"	 ), m_lightConstantAttenuation );
-	glUniform1f( ul( "lightLinearAttenuation"	 ), m_lightLinearAttenuation   );
-	glUniform1f( ul( "lightQuadraticAttenuation" ), m_lightQuadraticAttenuation);
-
-	// - Anyagjellemzők beállítása
-	glUniform3fv( ul( "Ka" ),		 1, glm::value_ptr( m_Ka ) );
-	glUniform3fv( ul( "Kd" ),		 1, glm::value_ptr( m_Kd ) );
-	glUniform3fv( ul( "Ks" ),		 1, glm::value_ptr( m_Ks ) );
-
-	glUniform1f( ul( "Shininess" ),	m_Shininess );
-
-	glUniform1f( ul( "elapsedTimeInSec" ), elapsedTimeInSec);
-	glUniform1f( ul( "waterWidth" ), waterWidth);
-	glUniform1f( ul( "waterHight" ), waterHight);
-
-	glUniform1i(ul("texImage"), 0);
-	glUniform1i(ul("texNormalMap"), 1);
-
-	glDrawElements( GL_TRIANGLES,    
-					waterGeom.count,			 
-					GL_UNSIGNED_INT,
-					nullptr );
-
-	glEnable(GL_CULL_FACE);
-
-	//
-	// skybox
-	//
-
-	// - VAO
-	glBindVertexArray( skyBoxGeom.vaoID );
-
-	// - Textura
-	glActiveTexture( GL_TEXTURE0 );
-	glBindTexture( GL_TEXTURE_CUBE_MAP, skyboxTexture );
-
-	// - Program
-	glUseProgram( shaderSkyBox );
-
-	// - uniform parameterek
-	glUniformMatrix4fv( ul("world"),    1, GL_FALSE, glm::value_ptr( glm::translate( camera.GetEye() ) ) );
-	glUniformMatrix4fv( ul("viewProj"), 1, GL_FALSE, glm::value_ptr( camera.GetViewProj() ) );
-
-	// - textúraegységek beállítása
-	glUniform1i( ul( "skyboxTexture" ), 0 );
-
-	// mentsük el az előző Z-test eredményt, azaz azt a relációt, ami alapján update-eljük a pixelt.
-	GLint prevDepthFnc;
-	glGetIntegerv(GL_DEPTH_FUNC, &prevDepthFnc);
-
-	// most kisebb-egyenlőt használjunk, mert mindent kitolunk a távoli vágósíkokra
-	glDepthFunc(GL_LEQUAL);
-
-	// - Rajzolas
-	glDrawElements( GL_TRIANGLES, skyBoxGeom.count, GL_UNSIGNED_INT, nullptr );
-
-	glDepthFunc(prevDepthFnc);
-
-	// shader kikapcsolasa
-	glUseProgram( 0 );
-
-	// - Textúrák kikapcsolása, minden egységre külön
-	glActiveTexture( GL_TEXTURE0 );
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture( GL_TEXTURE_2D, 0 );
-	glBindTexture( GL_TEXTURE_CUBE_MAP, 0 );
-
-	// VAO kikapcsolása
-	glBindVertexArray( 0 );
+	glBindVertexArray(0);
 }
 
 void WorldOfWarships::renderGUI()

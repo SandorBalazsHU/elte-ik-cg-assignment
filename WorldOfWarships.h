@@ -96,6 +96,12 @@ private:
 	glm::vec3 m_Ks = glm::vec3( 1.0 );
 	float m_Shininess = 1.0;
 
+	void sceneRender();
+	void drawSceneObject(OGLObject& geom, GLuint& texture);
+	void waterRender();
+	void skyBoxRender();
+	void renderClean();
+
 	void initTextures();
 	void cleanTextures();
 	void initShaders();

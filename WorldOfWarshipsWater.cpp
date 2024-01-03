@@ -7,25 +7,25 @@
 
 #include "WorldOfWarships.h"
 
-void WorldOfWarships::sceneRender() {
-	drawSceneObject(shipGeom, shipTexture);
-}
+void WorldOfWarships::waterRender() {
+	//disable baceók
+	glDisable(GL_CULL_FACE);
 
-void WorldOfWarships::drawSceneObject(OGLObject &geom, GLuint &texture) {
 	//geom
-	glBindVertexArray(geom.vaoID);
+	glBindVertexArray(waterGeom.vaoID);
 
 	//text
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, texture);
+	glBindTexture(GL_TEXTURE_2D, waterTexture);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, waterNormalMapTexture);
 
 	//shader
-	glUseProgram(shaderBase);
+	glUseProgram(shaderWater);
 
 	//transform
-	glm::vec3 pos = glm::vec3(0.0);
-	pos.y = sin((pos.z + elapsedTimeInSec) / 8.0) + sin((pos.y + pos.x + elapsedTimeInSec) / 6.0);
-	glm::mat4 matWorld = glm::translate(pos);
+	glm::mat4 matWorld = glm::translate(glm::vec3(0.0, 0.1, 0.0));
 
 	//mat
 	glUniformMatrix4fv(ul("world"), 1, GL_FALSE, glm::value_ptr(matWorld));
@@ -42,7 +42,7 @@ void WorldOfWarships::drawSceneObject(OGLObject &geom, GLuint &texture) {
 	glUniform1f(ul("lightLinearAttenuation"), m_lightLinearAttenuation);
 	glUniform1f(ul("lightQuadraticAttenuation"), m_lightQuadraticAttenuation);
 
-	//material
+	//mat
 	glUniform3fv(ul("Ka"), 1, glm::value_ptr(m_Ka));
 	glUniform3fv(ul("Kd"), 1, glm::value_ptr(m_Kd));
 	glUniform3fv(ul("Ks"), 1, glm::value_ptr(m_Ks));
@@ -50,12 +50,21 @@ void WorldOfWarships::drawSceneObject(OGLObject &geom, GLuint &texture) {
 	//gloss
 	glUniform1f(ul("Shininess"), m_Shininess);
 
-	//tex
+	//shader parameters
+	glUniform1f(ul("elapsedTimeInSec"), elapsedTimeInSec);
+	glUniform1f(ul("waterWidth"), waterWidth);
+	glUniform1f(ul("waterHight"), waterHight);
+
+	//text
 	glUniform1i(ul("texImage"), 0);
+	glUniform1i(ul("texNormalMap"), 1);
 
 	//draw
 	glDrawElements(GL_TRIANGLES,
-		shipGeom.count,
+		waterGeom.count,
 		GL_UNSIGNED_INT,
 		nullptr);
+
+	//enable back
+	glEnable(GL_CULL_FACE);
 };

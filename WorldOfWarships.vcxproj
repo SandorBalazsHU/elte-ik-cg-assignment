@@ -94,7 +94,9 @@
     <ClCompile Include="WorldOfWarshipsGeom.cpp" />
     <ClCompile Include="WorldOfWarshipsPrep.cpp" />
     <ClCompile Include="WorldOfWarshipsScene.cpp" />
+    <ClCompile Include="WorldOfWarshipsSky.cpp" />
     <ClCompile Include="WorldOfWarshipsUtilis.cpp" />
+    <ClCompile Include="WorldOfWarshipsWater.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Window.h" />
