@@ -57,6 +57,9 @@
     <ClCompile Include="WorldOfWarshipsGeom.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="WorldOfWarshipsScene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="WorldOfWarships.h">

@@ -10,66 +10,40 @@
 WorldOfWarships::WorldOfWarships() {};
 WorldOfWarships::~WorldOfWarships() {};
 
-bool WorldOfWarships::Init()
+bool WorldOfWarships::init()
 {
 	setupDebugCallback();
-
-	// törlési szín legyen kékes
 	glClearColor(0.125f, 0.25f, 0.5f, 1.0f);
-	
-	// Nem minden driver támogatja a vonalak és pontok vastagabb megjelenítését, ezért
-	// lekérdezzük, hogy támogatott-e a GL_LINE_WIDTH_RANGE és GL_POINT_SIZE_RANGE tokenek.
-	{
-		// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glPointSize.xhtml
-		GLfloat pointSizeRange[2] = { 0.0f, 0.0f };
-		glGetFloatv(GL_POINT_SIZE_RANGE, pointSizeRange); // lekérdezzük a támogatott pontméretek tartományát
-		glPointSize( std::min( 16.0f, pointSizeRange[ 1 ] ) ); // nagyobb pontok
-	}
-
-	/* {
-		// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glLineWidth.xhtml
-		GLfloat lineWidthRange[2] = { 0.0f, 0.0f };
-		glGetFloatv(GL_LINE_WIDTH_RANGE, lineWidthRange); // lekérdezzük a támogatott vonalvastagság tartományát
-		glLineWidth( std::min( 4.0f, lineWidthRange[ 1 ] ) ); // vastagabb vonalak
-	}*/
+	GLfloat pointSizeRange[2] = { 0.0f, 0.0f };
+	glGetFloatv(GL_POINT_SIZE_RANGE, pointSizeRange);
+	glPointSize( std::min( 16.0f, pointSizeRange[ 1 ] ) );
 
 	initShaders();
 	initGeometry();
 	initTextures();
 
-	//
-	// egyéb inicializálás
-	//
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glEnable(GL_DEPTH_TEST);
 
-	glEnable(GL_CULL_FACE); // kapcsoljuk be a hátrafelé néző lapok eldobását
-	glCullFace(GL_BACK);    // GL_BACK: a kamerától "elfelé" néző lapok, GL_FRONT: a kamera felé néző lapok
-
-	glEnable(GL_DEPTH_TEST); // mélységi teszt bekapcsolása (takarás)
-
-	// kamera
-	camera.SetView(
-		glm::vec3(0.0, 25.0, 25.0),	// honnan nézzük a színteret	   - eye
-		glm::vec3(0.0, 0.0, 0.0),   // a színtér melyik pontját nézzük - at
-		glm::vec3(0.0, 1.0, 0.0));  // felfelé mutató irány a világban - up
-
+	camera.SetView(glm::vec3(0.0, 25.0, 25.0), glm::vec3(0.0, 0.0, 0.0),glm::vec3(0.0, 1.0, 0.0));
 	return true;
 }
 
-void WorldOfWarships::Clean()
+void WorldOfWarships::clean()
 {
 	cleanShaders();
 	cleanGeometry();
 	cleanTextures();
 }
 
-void WorldOfWarships::Update( const SUpdateInfo& updateInfo )
+void WorldOfWarships::update( const SUpdateInfo& updateInfo )
 {
 	elapsedTimeInSec = updateInfo.ElapsedTimeInSec;
-
 	camera.Update( updateInfo.DeltaTimeInSec );
 }
 
-void WorldOfWarships::Render()
+void WorldOfWarships::render()
 {
 	// töröljük a frampuffert (GL_COLOR_BUFFER_BIT)...
 	// ... és a mélységi Z puffert (GL_DEPTH_BUFFER_BIT)
@@ -229,7 +203,7 @@ void WorldOfWarships::Render()
 	glBindVertexArray( 0 );
 }
 
-void WorldOfWarships::RenderGUI()
+void WorldOfWarships::renderGUI()
 {
 	//ImGui::ShowDemoWindow();
 	if ( ImGui::Begin( "Lighting settings" ) )

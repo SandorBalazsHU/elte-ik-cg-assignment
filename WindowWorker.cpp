@@ -65,17 +65,17 @@ void Window::update() {
 	};
 	LastTick = CurrentTick;
 
-	WorldOfWarships.Update(updateInfo);
+	WorldOfWarships.update(updateInfo);
 };
 
 void Window::render() {
-	WorldOfWarships.Render();
+	WorldOfWarships.render();
 
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
 
 	ImGui::NewFrame();
-	WorldOfWarships.RenderGUI();
+	WorldOfWarships.renderGUI();
 	ImGui::Render();
 
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -83,7 +83,7 @@ void Window::render() {
 };
 
 int Window::init() {
-	if (!WorldOfWarships.Init())
+	if (!WorldOfWarships.init())
 	{
 		close();
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "[app.Init] Error during the initialization of the application!");
@@ -93,5 +93,5 @@ int Window::init() {
 };
 
 void Window :: clean() {
-	WorldOfWarships.Clean();
+	WorldOfWarships.clean();
 };

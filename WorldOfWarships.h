@@ -34,12 +34,12 @@ public:
 	WorldOfWarships();
 	~WorldOfWarships();
 
-	bool Init();
-	void Clean();
+	bool init();
+	void clean();
 
-	void Update( const SUpdateInfo& );
-	void Render();
-	void RenderGUI();
+	void update( const SUpdateInfo& );
+	void render();
+	void renderGUI();
 
 	void keyboardDown(const SDL_KeyboardEvent&);
 	void keyboardUp(const SDL_KeyboardEvent&);
