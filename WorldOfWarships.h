@@ -57,10 +57,15 @@ private:
 	int waterResY = 1000;
 	float elapsedTimeInSec = 0.0f;
 
+	//mountains
+	int mountainsResX = 1000;
+	int mountainsResY = 1000;
+
 	//shaders
 	GLuint shaderBase = 0;
 	GLuint shaderSkyBox = 0;
 	GLuint shaderWater = 0;
+	GLuint mountainsShader = 0;
 
 	//geom
 	OGLObject shipGeom = {};
@@ -69,6 +74,8 @@ private:
 	OGLObject lightHouseGeom = {};
 	OGLObject skyBoxGeom = {};
 	OGLObject waterGeom = {};
+	OGLObject mountainsGeom = {};
+
 
 	//textures
 	GLuint shipTexture = 0;

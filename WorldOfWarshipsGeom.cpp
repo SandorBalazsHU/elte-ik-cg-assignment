@@ -25,6 +25,31 @@ struct Blank
 	}
 };
 
+struct Mountains
+{
+	glm::vec3 GetPos(float u, float v) const noexcept
+	{
+		glm::vec3 pos = glm::vec3(-10.0, 0.0, 10.0) + glm::vec3(20.0, 0.0, -20.0) * glm::vec3(u, 0.0, v);
+		pos.y = sinf(pos.z);
+
+		return pos;
+	}
+
+	glm::vec3 GetNorm(float u, float v) const noexcept
+	{
+		glm::vec3 du = GetPos(u + 0.01f, v) - GetPos(u - 0.01f, v);
+		glm::vec3 dv = GetPos(u, v + 0.01f) - GetPos(u, v - 0.01f);
+
+		return glm::normalize(glm::cross(du, dv));
+	}
+
+	glm::vec2 GetTex(float u, float v) const noexcept
+	{
+		glm::vec3 pos = GetPos(u, v);
+		return glm::vec2(pos.y, 0.1);
+	}
+};
+
 void WorldOfWarships::initGeometry()
 {
 	const std::initializer_list<VertexAttributeDescriptor> vertexAttribList =
@@ -61,6 +86,18 @@ void WorldOfWarships::initGeometry()
 		waterMesh.indexArray = surfaceMeshCPU.indexArray;
 	}
 	waterGeom = CreateGLObjectFromMesh(waterMesh, { { 0, offsetof(glm::vec2,x), 2, GL_FLOAT} });
+
+	//Mountains
+	MeshObject<glm::vec2> mountainsMesh;
+	{
+		MeshObject<Vertex> surfaceMeshCPU = GetParamSurfMesh(Mountains(), mountainsResX, mountainsResY);
+		for (const Vertex& v : surfaceMeshCPU.vertexArray)
+		{
+			mountainsMesh.vertexArray.emplace_back(glm::vec2(v.position.x, v.position.y));
+		}
+		mountainsMesh.indexArray = surfaceMeshCPU.indexArray;
+	}
+	mountainsGeom = CreateGLObjectFromMesh(mountainsMesh, { { 0, offsetof(glm::vec2,x), 2, GL_FLOAT} });
 }
 
 void WorldOfWarships::cleanGeometry()
