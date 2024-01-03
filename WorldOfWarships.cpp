@@ -1,3 +1,10 @@
+/*
+ * ELTE IK Számítógépes grafika
+ * World of Warships
+ * Sándor Balázs
+ * AZA6NL
+ */
+
 #include <string>
 #include <imgui.h>
 #include "ObjParser.h"

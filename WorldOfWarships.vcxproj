@@ -84,6 +84,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Window.cpp" />
+    <ClCompile Include="WindowWorker.cpp" />
     <ClCompile Include="WorldOfWarships.cpp" />
     <ClCompile Include="includes\SDL_GLDebugMessageCallback.cpp" />
     <ClCompile Include="main.cpp" />

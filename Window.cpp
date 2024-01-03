@@ -1,7 +1,15 @@
+/*
+ * ELTE IK Számítógépes grafika
+ * World of Warships
+ * Sándor Balázs
+ * AZA6NL
+ */
+
 #include "Window.h"
 
 Window::Window() {
 	sdlWindow = nullptr;
+	bool quit = false;
 };
 
 Window::~Window() {};
