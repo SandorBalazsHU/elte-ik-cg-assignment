@@ -48,4 +48,3 @@ private:
 	SDL_Event event;
 	WorldOfWarships WorldOfWarships;
 };
-

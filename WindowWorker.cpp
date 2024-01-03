@@ -26,29 +26,29 @@ void Window::eventListener() {
 				Uint32 FullScreenSwitchFlag = (SDL_GetWindowFlags(sdlWindow) & SDL_WINDOW_FULLSCREEN_DESKTOP) ? 0 : SDL_WINDOW_FULLSCREEN_DESKTOP;
 				SDL_SetWindowFullscreen(sdlWindow, FullScreenSwitchFlag);
 			}
-			if (!is_keyboard_captured) WorldOfWarships.KeyboardDown(event.key);
+			if (!is_keyboard_captured) WorldOfWarships.keyboardDown(event.key);
 			break;
 		case SDL_KEYUP:
-			if (!is_keyboard_captured) WorldOfWarships.KeyboardUp(event.key);
+			if (!is_keyboard_captured) WorldOfWarships.keyboardUp(event.key);
 			break;
 		case SDL_MOUSEBUTTONDOWN:
-			if (!is_mouse_captured) WorldOfWarships.MouseDown(event.button);
+			if (!is_mouse_captured) WorldOfWarships.mouseDown(event.button);
 			break;
 		case SDL_MOUSEBUTTONUP:
-			if (!is_mouse_captured) WorldOfWarships.MouseUp(event.button);
+			if (!is_mouse_captured) WorldOfWarships.mouseUp(event.button);
 			break;
 		case SDL_MOUSEWHEEL:
-			if (!is_mouse_captured) WorldOfWarships.MouseWheel(event.wheel);
+			if (!is_mouse_captured) WorldOfWarships.mouseWheel(event.wheel);
 			break;
 		case SDL_MOUSEMOTION:
-			if (!is_mouse_captured) WorldOfWarships.MouseMove(event.motion);
+			if (!is_mouse_captured) WorldOfWarships.mouseMove(event.motion);
 			break;
 		case SDL_WINDOWEVENT:
 			if ((event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) || (event.window.event == SDL_WINDOWEVENT_SHOWN))
 			{
 				int w, h;
 				SDL_GetWindowSize(sdlWindow, &w, &h);
-				WorldOfWarships.Resize(w, h);
+				WorldOfWarships.resize(w, h);
 			}
 			break;
 		}

@@ -7,15 +7,19 @@
 
 #pragma once
 
-// GLM
+#include <string>
+#include <imgui.h>
 #include "Camera.h"
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
+#include "ObjParser.h"
 #include "GLUtils.hpp"
 #include <glm/glm.hpp>
 #include <SDL2/SDL_opengl.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtx/transform2.hpp>
+#include "ParametricSurfaceMesh.hpp"
+#include "SDL_GLDebugMessageCallback.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 struct SUpdateInfo
@@ -37,28 +41,16 @@ public:
 	void Render();
 	void RenderGUI();
 
-	void KeyboardDown(const SDL_KeyboardEvent&);
-	void KeyboardUp(const SDL_KeyboardEvent&);
-	void MouseMove(const SDL_MouseMotionEvent&);
-	void MouseDown(const SDL_MouseButtonEvent&);
-	void MouseUp(const SDL_MouseButtonEvent&);
-	void MouseWheel(const SDL_MouseWheelEvent&);
-	void Resize(int, int);
+	void keyboardDown(const SDL_KeyboardEvent&);
+	void keyboardUp(const SDL_KeyboardEvent&);
+	void mouseMove(const SDL_MouseMotionEvent&);
+	void mouseDown(const SDL_MouseButtonEvent&);
+	void mouseUp(const SDL_MouseButtonEvent&);
+	void mouseWheel(const SDL_MouseWheelEvent&);
+	void resize(int, int);
 protected:
 
 	float m_ElapsedTimeInSec = 0.0f;
-
-	// Mozgás trajektória
-	float m_currentParam = 0.0;
-	static constexpr int MAX_POINT_COUNT = 20;
-	std::vector<glm::vec3> m_controlPoints;
-
-	glm::vec3 EvaluatePathPosition() const;
-	glm::vec3 EvaluatePathTangent() const;
-
-	// biztonsági üveg
-	static constexpr glm::vec3 GLASS_POSITION = glm::vec3( 0.0f, 0.0f, 21.0f );
-	static constexpr glm::vec3 GLASS_SCALE    = glm::vec3( 21.0, 10.5, 10.5 );
 
 	// Kamera
 	Camera m_camera;
@@ -125,6 +117,5 @@ protected:
 	void CleanTextures();
 	void InitSkyboxTextures();
 	void CleanSkyboxTextures();
-	void SetupDebugCallback();
+	void setupDebugCallback();
 };
-

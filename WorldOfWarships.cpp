@@ -5,34 +5,10 @@
  * AZA6NL
  */
 
-#include <string>
-#include <imgui.h>
-#include "ObjParser.h"
 #include "WorldOfWarships.h"
-#include "ParametricSurfaceMesh.hpp"
-#include "SDL_GLDebugMessageCallback.h"
 
-
-WorldOfWarships::WorldOfWarships()
-{
-}
-
-WorldOfWarships::~WorldOfWarships()
-{
-}
-
-void WorldOfWarships::SetupDebugCallback()
-{
-	// engedélyezzük és állítsuk be a debug callback függvényt ha debug context-ben vagyunk 
-	GLint context_flags;
-	glGetIntegerv(GL_CONTEXT_FLAGS, &context_flags);
-	if (context_flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
-		glEnable(GL_DEBUG_OUTPUT);
-		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
-		glDebugMessageCallback(SDL_GLDebugMessageCallback, nullptr);
-	}
-}
+WorldOfWarships::WorldOfWarships() {};
+WorldOfWarships::~WorldOfWarships() {};
 
 void WorldOfWarships::InitShaders()
 {
@@ -278,7 +254,7 @@ void WorldOfWarships::CleanSkyboxTextures()
 
 bool WorldOfWarships::Init()
 {
-	SetupDebugCallback();
+	setupDebugCallback();
 
 	// törlési szín legyen kékes
 	glClearColor(0.125f, 0.25f, 0.5f, 1.0f);
@@ -318,11 +294,6 @@ bool WorldOfWarships::Init()
 		glm::vec3(0.0, 0.0, 0.0),   // a színtér melyik pontját nézzük - at
 		glm::vec3(0.0, 1.0, 0.0));  // felfelé mutató irány a világban - up
 
-
-	// kontrolpontok
-	m_controlPoints.push_back(glm::vec3(-1.0f, 0.0, -1.0f));
-	m_controlPoints.push_back(glm::vec3( 1.0f, 0.0,  1.0f));
-
 	return true;
 }
 
@@ -358,30 +329,9 @@ void WorldOfWarships::Render()
 
 	glUseProgram( m_programID );
 
-	// - uniform parameterek beállítása
-	glm::vec3 suzanneForward = EvaluatePathTangent(); // Merre nézzen a Suzanne?
-	glm::vec3 suzanneWorldUp = glm::vec3(0.0, 1.0, 0.0); // Milyen irány a felfelé?
-	if ( fabsf( suzanneForward.y ) > 0.99 ) // Ha a Suzanne felfelé néz, akkor a worldUp irányt nem tudjuk használni, mert akkor a jobbra vektor null vektor lesz
-	{
-        suzanneWorldUp = glm::vec3( -1.0, 0.0, 0.0); // Ezért ha felfelé néz, akkor a worldUp legyen egy tetszőleges [0,1,0] vektorra merőleges irány
-    }
-	glm::vec3 suzanneRight = glm::normalize(glm::cross(suzanneForward, suzanneWorldUp)); // Jobbra nézése
-	glm::vec3 suzanneUp = glm::cross(suzanneRight, suzanneForward); // Felfelé nézése
-
-	// A három vektorból álló bázisvektorokat egy mátrixba rendezzük, hogy tudjuk velük forgatni a Suzanne-t
-	glm::mat4 suzanneRot(1.0f);
-	suzanneRot[0] = glm::vec4(suzanneForward, 0.0f);
-	suzanneRot[1] = glm::vec4(     suzanneUp, 0.0f);
-	suzanneRot[2] = glm::vec4(  suzanneRight, 0.0f);
-
-	// A Suzanne alapállásban a Z tengelyre néz, de nekünk az X tengelyre kell, ezért elforgatjuk
-	static const glm::mat4 suzanneTowardX = glm::rotate(glm::radians(90.0f), glm::vec3(0.0, 1.0, 0.0));
-
-	//glm::mat4 matWorld = glm::translate(EvaluatePathPosition()) * suzanneRot * suzanneTowardX;
-
-	glm::vec3 pos = EvaluatePathPosition();
+	glm::vec3 pos = glm::vec3(0.0);
 	pos.y = sin((pos.z + m_ElapsedTimeInSec) / 8.0) + sin((pos.y + pos.x + m_ElapsedTimeInSec) / 6.0);
-	glm::mat4 matWorld = glm::translate(pos) * suzanneRot * suzanneTowardX;
+	glm::mat4 matWorld = glm::translate(pos);
 
 	glUniformMatrix4fv( ul( "world" ),    1, GL_FALSE, glm::value_ptr( matWorld ) );
 	glUniformMatrix4fv( ul( "worldIT" ),  1, GL_FALSE, glm::value_ptr( glm::transpose( glm::inverse( matWorld ) ) ) );
@@ -473,25 +423,6 @@ void WorldOfWarships::Render()
 
 	glEnable(GL_CULL_FACE);
 
-	// Tengelyek
-	glBindVertexArray( 0 );
-
-	glUseProgram( m_programAxesID );
-	glUniformMatrix4fv( ul("world"),    1, GL_FALSE, glm::value_ptr( glm::identity<glm::mat4>() ) );
-	glUniformMatrix4fv( ul("viewProj"), 1, GL_FALSE, glm::value_ptr( m_camera.GetViewProj() ) );
-	glDrawArrays( GL_LINES, 0, 6 );
-
-	// Trajektória
-	glUseProgram( m_programTrajectoryID );
-	glUniformMatrix4fv( ul("world"),    1, GL_FALSE, glm::value_ptr( glm::identity<glm::mat4>() ) );
-	glUniformMatrix4fv( ul("viewProj"), 1, GL_FALSE, glm::value_ptr( m_camera.GetViewProj() ) );
-	GLsizei controlPointCount = static_cast<GLsizei>(m_controlPoints.size());
-	glUniform3fv( ul( "positions"), controlPointCount, glm::value_ptr(m_controlPoints[0]));
-	glUniform3fv( ul("color"), 1, glm::value_ptr( glm::vec3(1.0, 0.0, 0.0) ) );
-	glDrawArrays( GL_LINE_STRIP, 0, controlPointCount );
-	glUniform3fv( ul("color"), 1, glm::value_ptr( glm::vec3(1.0, 0.0, 1.0) ) );
-	glDrawArrays( GL_POINTS, 0, controlPointCount );
-
 	//
 	// skybox
 	//
@@ -524,36 +455,6 @@ void WorldOfWarships::Render()
 	glDrawElements( GL_TRIANGLES, m_SkyboxGPU.count, GL_UNSIGNED_INT, nullptr );
 
 	glDepthFunc(prevDepthFnc);
-
-	/*/ vedő üveg
-	glBindVertexArray( m_quadGPU.vaoID );
-
-	// - Textúrák beállítása, minden egységre külön
-	glActiveTexture( GL_TEXTURE0 );
-	glBindTexture( GL_TEXTURE_2D, m_glassTextureID );
-
-	glDisable(GL_CULL_FACE ); // kapcsoljuk ki a hátrafelé néző lapok eldobását
-	glEnable(GL_BLEND); // átlátszóság engedélyezése
-
-	// meghatározza, hogy az átlátszó objektum az adott pixelben hogyan módosítsa a korábbi fragmentekből oda lerakott színt: https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glBlendFunc.xhtml
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); 
-	
-	glUseProgram( m_programID );
-
-	glUniformMatrix4fv( ul( "viewProj" ), 1, GL_FALSE, glm::value_ptr( m_camera.GetViewProj() ) );
-
-	matWorld = glm::translate( GLASS_POSITION ) * glm::scale( GLASS_SCALE );
-	glUniformMatrix4fv( ul( "world" ), 1, GL_FALSE, glm::value_ptr( matWorld ) );
-	glUniformMatrix4fv( ul( "worldIT" ), 1, GL_FALSE, glm::value_ptr( glm::transpose( glm::inverse( matWorld ) ) ) );
-
-	glDrawElements( GL_TRIANGLES,
-					m_quadGPU.count,
-					GL_UNSIGNED_INT,
-					nullptr );
-
-	glDisable(GL_BLEND);
-	glEnable(GL_CULL_FACE ); // kapcsoljuk vissza a hátrafelé néző lapok eldobását
-	*/
 
 	// shader kikapcsolasa
 	glUseProgram( 0 );
@@ -610,69 +511,6 @@ void WorldOfWarships::RenderGUI()
 		}
 	}
 	ImGui::End();
-
-	if ( ImGui::Begin( "Experiment" ) )
-	{
-		// A paramétert szabályozó csúszka
-		ImGui::SliderFloat("Parameter", &m_currentParam, 0, (float)(m_controlPoints.size() - 1));
-
-		ImGui::SeparatorText("Control points");
-
-		// A kijelölt pont indexe
-		// Lehetne a WorldOfWarships tagváltozója is, de mivel csak a GUI-hoz kell, ezért elégséges lokális, de statikus változónak lennie
-		static int currentItem = -1;
-
-		// A listboxban megjelenítjük a pontokat
-		// Legyen a magasssága annyi, hogy MAX_POINT_COUNT elem férjen bele
-		// ImGui::GetTextLineHeightWithSpacing segítségével lekérhető egy sor magassága
-		if (ImGui::BeginListBox("Control Points", ImVec2(0.0, MAX_POINT_COUNT * ImGui::GetTextLineHeightWithSpacing())))
-		{
-			for ( int i = 0; i < static_cast<const int>( m_controlPoints.size() ); ++i )
-			{
-				const bool is_seleceted = ( currentItem == i ); // épp ki van-e jelölve?
-				if ( ImGui::Selectable( std::to_string( i ).c_str(), is_seleceted ) )
-				{
-					if ( i == currentItem ) currentItem = -1; // Ha rákattintottunk, akkor szedjük le a kijelölést
-					else currentItem = i; // Különben jelöljük ki
-				}
-
-				// technikai apróság, nem baj ha lemarad.
-				if ( is_seleceted )
-					ImGui::SetItemDefaultFocus();
-			}
-			ImGui::EndListBox(); 
-		}
-
-		// Gombnyomásra új pontot adunk a végére
-		if (ImGui::Button("Add")) // Akkor tér vissza true-val, ha rákattintottunk
-		{
-			if ( m_controlPoints.size() < MAX_POINT_COUNT )
-			{
-				m_controlPoints.push_back( glm::vec3( 0.0f ) );
-				currentItem = static_cast<const int>( m_controlPoints.size() - 1 ); // Az új pontot állítjuk be aktuálisnak
-			}
-		}
-
-		ImGui::SameLine();
-
-		// Gombnyomásra töröljük a kijelölt pontot
-		if (ImGui::Button("Delete") )
-		{
-			if ( !m_controlPoints.empty() && currentItem < m_controlPoints.size() && currentItem != -1 ) // currentItem valid index?
-			{
-				m_controlPoints.erase( m_controlPoints.begin() + currentItem ); // Iterátoron keresztül tudjuk törölni a kijelölt elemet
-				currentItem = -1; // Törölve lett a kijelölés
-			}
-		}
-
-		// Ha van kijelölt elem, akkor jelenítsük meg a koordinátáit
-		// és lehessen szerkeszteni
-		if ( currentItem < m_controlPoints.size() && currentItem != -1 ) // currentItem valid index?
-		{
-			ImGui::SliderFloat3("Coordinates", glm::value_ptr(m_controlPoints[currentItem]), -2000, 2000);
-		}
-	}
-	ImGui::End();
 }
 
 GLint WorldOfWarships::ul( const char* uniformName ) noexcept
@@ -685,104 +523,4 @@ GLint WorldOfWarships::ul( const char* uniformName ) noexcept
 	// A program és a uniform név ismeretében kérdezzük le a location-t!
 	// https://registry.khronos.org/OpenGL-Refpages/gl4/html/glGetUniformLocation.xhtml
 	return glGetUniformLocation( programID, uniformName );
-}
-
-// https://wiki.libsdl.org/SDL2/SDL_KeyboardEvent
-// https://wiki.libsdl.org/SDL2/SDL_Keysym
-// https://wiki.libsdl.org/SDL2/SDL_Keycode
-// https://wiki.libsdl.org/SDL2/SDL_Keymod
-
-void WorldOfWarships::KeyboardDown(const SDL_KeyboardEvent& key)
-{	
-	if ( key.repeat == 0 ) // Először lett megnyomva
-	{
-		if ( key.keysym.sym == SDLK_F5 && key.keysym.mod & KMOD_CTRL )
-		{
-			CleanShaders();
-			InitShaders();
-		}
-		if ( key.keysym.sym == SDLK_F1 )
-		{
-			GLint polygonModeFrontAndBack[ 2 ] = {};
-			// https://registry.khronos.org/OpenGL-Refpages/gl4/html/glGet.xhtml
-			glGetIntegerv( GL_POLYGON_MODE, polygonModeFrontAndBack ); // Kérdezzük le a jelenlegi polygon módot! Külön adja a front és back módokat.
-			GLenum polygonMode = ( polygonModeFrontAndBack[ 0 ] != GL_FILL ? GL_FILL : GL_LINE ); // Váltogassuk FILL és LINE között!
-			// https://registry.khronos.org/OpenGL-Refpages/gl4/html/glPolygonMode.xhtml
-			glPolygonMode( GL_FRONT_AND_BACK, polygonMode ); // Állítsuk be az újat!
-		}
-	}
-	m_camera.KeyboardDown( key );
-}
-
-void WorldOfWarships::KeyboardUp(const SDL_KeyboardEvent& key)
-{
-	m_camera.KeyboardUp( key );
-}
-
-// https://wiki.libsdl.org/SDL2/SDL_MouseMotionEvent
-
-void WorldOfWarships::MouseMove(const SDL_MouseMotionEvent& mouse)
-{
-	m_camera.MouseMove( mouse );
-}
-
-// https://wiki.libsdl.org/SDL2/SDL_MouseButtonEvent
-
-void WorldOfWarships::MouseDown(const SDL_MouseButtonEvent& mouse)
-{
-}
-
-void WorldOfWarships::MouseUp(const SDL_MouseButtonEvent& mouse)
-{
-}
-
-// https://wiki.libsdl.org/SDL2/SDL_MouseWheelEvent
-
-void WorldOfWarships::MouseWheel(const SDL_MouseWheelEvent& wheel)
-{
-	m_camera.MouseWheel( wheel );
-}
-
-
-// a két paraméterben az új ablakméret szélessége (_w) és magassága (_h) található
-void WorldOfWarships::Resize(int _w, int _h)
-{
-	glViewport(0, 0, _w, _h);
-	m_camera.Resize( _w, _h );
-}
-
-// Pozíció kiszámítása a kontrollpontok alapján
-glm::vec3 WorldOfWarships::EvaluatePathPosition() const
-{
-	if (m_controlPoints.size() == 0) // Ha nincs pont, akkor visszaadjuk az origót
-		return glm::vec3(0);
-
-	const int interval = (const int)m_currentParam; // Melyik két pont között vagyunk?
-
-	if (interval < 0) // Ha a paraméter negatív, akkor a kezdőpontot adjuk vissza
-		return m_controlPoints[0];
-
-	if (interval >= m_controlPoints.size() - 1) // Ha a paraméter nagyobb, mint a pontok száma, akkor az utolsó pontot adjuk vissza
-		return m_controlPoints[m_controlPoints.size() - 1];
-
-	float localT = m_currentParam - interval; // A paramétert normalizáljuk az aktuális intervallumra
-	
-	return glm::mix( m_controlPoints[interval], m_controlPoints[interval + 1], localT ); // Lineárisan interpolálunk a két kontrollpont között
-}
-
-// Tangens kiszámítása a kontrollpontok alapján
-glm::vec3 WorldOfWarships::EvaluatePathTangent() const
-{
-	if (m_controlPoints.size() < 2) // Ha nincs elég pont az interpolációhoy, akkor visszaadjuk az x tengelyt
-		return glm::vec3(1.0,0.0,0.0);
-
-	int interval = (int)m_currentParam; // Melyik két pont között vagyunk?
-
-	if (interval < 0) // Ha a paraméter negatív, akkor a kezdő intervallumot adjuk vissza
-		interval = 0;
-
-	if (interval >= m_controlPoints.size() - 1) // Ha a paraméter nagyobb, mint az intervallumok száma, akkor az utolsót adjuk vissza
-		interval = static_cast<int>( m_controlPoints.size() - 2 );
-
-	return glm::normalize(m_controlPoints[interval + 1] - m_controlPoints[interval]);
 }
